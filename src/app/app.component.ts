@@ -1,9 +1,14 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { PatientRegisterComponent } from './patient-register/patient-register.component';
+import { CommonModule } from '@angular/common';
+import { AppointmentComponent } from './appointment/appointment.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, NavbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

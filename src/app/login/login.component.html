@@ -1,0 +1,34 @@
+<!-- login.component.html -->
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+  <div class="w-100" style="max-width: 600px;">
+    <div class="card shadow-lg">
+      <div class="card-header text-center bg-warning text-success rounded-top">
+        <h2 class="pt-3">Welcome to the Login Page</h2>
+      </div>
+      <div class="card-body">
+        <h3 class="text-center mb-4">Login</h3>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label"><h5>Email:</h5></label>
+            <input type="email" class="form-control" formControlName="email">
+            <div class="text-danger" *ngIf="f['email'].touched && f['email'].invalid">Valid email is required.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><h5>Password:</h5></label>
+            <input type="password" class="form-control" formControlName="password">
+            <div class="text-danger" *ngIf="f['password'].touched && f['password'].invalid">Password is required.</div>
+          </div>
+
+          <button [disabled]="!form.valid" type="submit" class="btn btn-primary w-100">
+            <h5>Login</h5>
+          </button>
+        </form>
+
+        <div class="text-center mt-4">
+          <button class="btn btn-outline-secondary" (click)="register()">Don't have an account? Register</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
