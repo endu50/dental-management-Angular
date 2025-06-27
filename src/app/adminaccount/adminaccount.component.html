@@ -1,1 +1,12 @@
-<p>adminaccount works!</p>
+<h1 class="text-center bg-danger p-5">Adminstrator Account Page!</h1>
+<input type="text" [(ngModel)]="serarchText"  class="form-control p-3" placeholder="enter FullName or email to search">
+
+<ul class="list-group mb-3 mt-3">
+<li class="list-group-item d-flex justify-content-between align-items-center"  *ngFor="let account of getFilteredAccount()">
+    <strong> {{account.fullName}}</strong> | <span> {{account.email}}</span> |<span>
+  {{ '*'.repeat(8) }}
+</span>
+    <button type="button" class="btn btn-danger" (click)="deleteAccount(account.id)">Delete</button>
+ 
+</li>
+</ul>
