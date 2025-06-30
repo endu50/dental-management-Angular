@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 export interface Account {
-  id: number;
+  id:number;
   fullName: string,
   email  : string,
 }
@@ -14,6 +14,8 @@ export interface Account {
 export class AuthService {
    private baseUrl = 'http://localhost:5139/api/auth/get';
      private baseUrl2 = 'http://localhost:5139/api/auth';
+     private baseUrlReg= 'http://localhost:5139/api/auth/register';
+         private baseUrlReset= 'http://localhost:5139/api/auth/request-reset';
   constructor(private router: Router, private http: HttpClient ) {}
 
   isLoggedIn(): boolean {
@@ -24,6 +26,9 @@ export class AuthService {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);
   }
+  registerAccount(account :Account):Observable<any>{
+    return this.http.post<Account[]>(this.baseUrlReg,account);
+  }
   getAccount():Observable<Account[]>{
     return this.http.get<Account[]>(this.baseUrl)
   }
@@ -32,4 +37,14 @@ export class AuthService {
      const url = `${this.baseUrl2}/${id}`
     return this.http.delete<void>(url);
   }
+  resetLink(email :string):Observable<any>{
+
+    return this.http.post<Account>(this.baseUrlReset,{email})
+  }
+  resetPassword(token: string, newPassword: string): Observable<any> {
+  return this.http.post('http://localhost:5139/api/auth/reset-password', {
+    token, newPassword
+  });
+}
+
 }

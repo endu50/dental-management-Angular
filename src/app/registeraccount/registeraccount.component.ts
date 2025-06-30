@@ -1,19 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule, } from '@angular/common';
 import { ReactiveFormsModule,FormGroup,FormBuilder,Validators, AbstractControl } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { HttpClientModule } from '@angular/common/http';
+import { Account, AuthService } from '../auth-service.service';
+
 
 @Component({
   selector: 'app-registeraccount',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './registeraccount.component.html',
   styleUrl: './registeraccount.component.css'
 })
 export class RegisteraccountComponent {
   form: FormGroup;
+  account: Account[]=[];
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private auth: AuthService) {
     this.form = this.fb.group({
       fullName: ['', [Validators.required,Validators.minLength(5)]],
       email: ['', [Validators.required, Validators.email]],
@@ -57,10 +58,18 @@ export class RegisteraccountComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      this.http.post('http://localhost:5139/api/auth/register', this.form.value)
-        .subscribe(res => console.log('Registered:', res));
+      const accounts = this.form.value;
+      this.auth.registerAccount(accounts).subscribe({
+        next: (data) => {
+        console.log('Registered:', data);
         alert("The Account Registered successfully");
         this.form.reset();
+      },
+      error : (err) => {
+          if(err==500 && err?.error?.errors)
+         console.log("registration failed"+ err.error.errors)
+        }
+      })
     }
   }
 }
