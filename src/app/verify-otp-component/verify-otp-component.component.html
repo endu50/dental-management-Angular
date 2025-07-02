@@ -1,1 +1,7 @@
-<p>verify-otp-component works!</p>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label>Enter OTP</label>
+  <input formControlName="otp" type="text" class="form-control" />
+  <button class="btn btn-success" type="submit">Verify OTP</button>
+  <p class="text-info mt-2">{{ message }}</p>
+</form>

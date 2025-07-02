@@ -46,5 +46,13 @@ export class AuthService {
     token, newPassword
   });
 }
+sendOtp(PhoneNumber: string): Observable<any> {
+  return this.http.post('http://localhost:5139/api/auth/send-otp', { PhoneNumber });
+}
+
+verifyOtp(PhoneNumber: string, otp: string): Observable<any> {
+  return this.http.post('http://localhost:5139/api/auth/verify-otp', { PhoneNumber, otp });
+}
+
 
 }

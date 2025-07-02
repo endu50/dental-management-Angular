@@ -1,1 +1,8 @@
-<p>send-otp-component works!</p>
+
+
+<form [formGroup]="otpForm" (ngSubmit)="onSubmit()">
+  <label>Phone Number</label>
+  <input formControlName="phoneNumber" type="text" class="form-control" />
+  <button class="btn btn-primary" type="submit">Send OTP</button>
+  <p class="text-success mt-2">{{ message }}</p>
+</form>

@@ -27,7 +27,7 @@
 
         <div class="text-center mt-4">
           <button class="btn btn-outline-secondary" (click)="GoToRegisterPage()">Don't have an account? Register</button>
-          <button class="btn btn-outline-primary" (click)="resetPassword()">Forget Password</button>
+          <button *ngIf="forgetpassowrd"  class="btn btn-outline-primary mx-2 rounded-pill bg-primary-subtle" (click)="resetPassword()">Forget Password</button>
 
         </div>
       </div>

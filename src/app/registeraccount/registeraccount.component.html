@@ -25,6 +25,14 @@
         <small *ngIf="f['email'].errors?.['email']">Valid Email is required</small>
       </div>
     </div>
+      <div class="mb-3">
+      <label class="form-label">PhoneNumber:</label>
+      <input class="form-control" type="email" formControlName="PhoneNumber">
+            <div  class="error-block" *ngIf="f['PhoneNumber'].touched && f['PhoneNumber'].invalid">
+        <small *ngIf="f['PhoneNumber'].errors?.['required']">PhoneNumber is required</small>
+        <small *ngIf="f['PhoneNumber'].errors?.['pattern']">PhoneNumber should be 10 digit</small>
+      </div>
+      </div>
   
     <div class="mb-3">
       <label class="form-label">Password:</label>

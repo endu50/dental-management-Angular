@@ -1,0 +1,50 @@
+<div class="container mt-5">
+  <h2 class="text-center text-primary mb-4">Make a Payment</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <!-- Payment Method Selection -->
+    <div class="mb-3">
+      <label class="form-label bg-warning">Payment Method</label>
+      <select formControlName="paymentMethod" class="form-select">
+        <option value="online">Online Payment</option>
+        <option value="cash">Cash Payment</option>
+      </select>
+    </div>
+
+    <!-- Cash Payment Fields -->
+    <div *ngIf="form.get('paymentMethod')?.value === 'cash'">
+      <div class="mb-3">
+        <label class="form-label">Amount</label>
+        <input
+          type="number"
+          formControlName="amount"
+          class="form-control"
+          placeholder="Enter amount"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Patient ID</label>
+        <input
+          type="text"
+          formControlName="patientId"
+          class="form-control"
+          placeholder="Enter Patient ID"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Payment Date</label>
+        <input
+          type="datetime-local"
+          formControlName="datePayment"
+          class="form-control"
+        />
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-success w-50">Submit</button>
+    </div>
+  </form>
+</div>
