@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <h4>Generate Receipt</h4>
+  <form [formGroup]="receiptForm" (ngSubmit)="submit()">
+    <div class="mb-3">
+      <input class="form-control" placeholder="Patient Name" formControlName="patientId" />
+    </div>
+    <div class="mb-3">
+      <input class="form-control" placeholder="Service" formControlName="paymentStatus" />
+    </div>
+    <div class="mb-3">
+      <input type="number" class="form-control" placeholder="Amount Paid" formControlName="amount" />
+    </div>
+    <div class="mb-3">
+      <select class="form-select" formControlName="method">
+        <option value="Cash">Cash</option>
+        <option value="Card">Card</option>
+        <option value="Mobile">Mobile</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" type="submit">Generate Receipt</button>
+  </form>
+
+  <div *ngIf="generatedReceipt" class="mt-5 border p-3">
+    <h5>Receipt</h5>
+    <p><strong>Patient:</strong> {{ generatedReceipt.patientId }}</p>
+    <p><strong>Service:</strong> {{ generatedReceipt.paymentStatus }}</p>
+    <p><strong>Amount Paid:</strong> {{ generatedReceipt.amount | currency }}</p>
+    <p><strong>Payment Method:</strong> {{ generatedReceipt.method }}</p>
+    <p><strong>Date:</strong> {{ generatedReceipt.datePayment | date }}</p>
+  </div>
+</div>

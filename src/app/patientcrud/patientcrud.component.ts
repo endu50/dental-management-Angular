@@ -135,7 +135,7 @@ resetForm(){
     this.patientservice.getPatientId(id).subscribe({
      
       next :(data) => { 
-        this.selectedPatient=data[0];
+        this.selectedPatient=data;
       },
       error : () => {
         this.errorMessage = 'Patient Form not found';

@@ -33,9 +33,9 @@ export class PatientService {
 
     return this.http.get<Patient[]>(this.baseUrl);
   }
-  getPatientId(id: number):Observable<Patient[]>{
+  getPatientId(id: number):Observable<Patient>{
 
-    return this,this.http.get<Patient[]>(`${this.baseUrl} /${id}`);
+    return this.http.get<Patient>(`${this.baseUrl}/${id}`);
   }
 
   updatePatient(patient: Patient):Observable<Patient>{

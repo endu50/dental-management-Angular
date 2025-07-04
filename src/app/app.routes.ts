@@ -13,6 +13,7 @@ import { SendOtpComponentComponent } from './send-otp-component/send-otp-compone
 import { VerifyOtpComponentComponent } from './verify-otp-component/verify-otp-component.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PaymentsComponent } from './payments/payments.component';
+import { RecieptComponent } from './reciept/reciept.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent }, // Home route
@@ -29,5 +30,6 @@ export const routes: Routes = [
     { path: 'reset-password', component: ResetPasswordComponent },
     { path: 'send-otp', component: SendOtpComponentComponent },
     { path: 'verify-otp', component: VerifyOtpComponentComponent },
-    { path: 'registeraccount', component: RegisteraccountComponent }
+    { path: 'registeraccount', component: RegisteraccountComponent },
+    { path: 'reciept', component: RecieptComponent }
 ];
