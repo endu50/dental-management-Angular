@@ -1,0 +1,45 @@
+ <div class="container align-content-center justify-content-center m-5">
+   <h1 class="text-primary mb-3">Detail Payment and Search</h1>
+   <div class="row">
+    <div class="col-md-4 mb-3">
+    <label class="form-label"><strong>Search Payment by Id and Payment Method </strong> </label>
+    <input class="form-control" [(ngModel)]="searchText" placeholder="Search Payment by PatientId and Payment Method">
+    </div>
+  <div class="col-md-8 mb-3">
+    <label class="form-label w-25"> <strong>Search by Payment Date </strong></label>
+    <input type="datetime-local" class="form-control" [(ngModel)]="searchDate" placeholder="Search Payment by Date">
+    </div>
+ </div>
+  <div class="row">
+    <div class="col-md-6">
+     <label class="form-label w-25"> <strong>Enter First Date </strong></label>
+    <input type="datetime-local" class="form-control" [(ngModel)]="searchDateFirst" placeholder="Search Payment by First Date">
+</div>
+<div class="col-md-6">
+     <label class="form-label w-25"> <strong>Enter Last
+         Date </strong></label>
+    <input type="datetime-local" class="form-control" [(ngModel)]="searchDateEnd" placeholder="Search Payment by Last Date">
+  </div>
+  </div>
+
+</div>
+
+<div class="container-fluid align-items-end justify-content-center">
+   
+<div class="row">
+  <h2 class="text-primary m-4 text-center"> Payment Details</h2>
+    <ul class="list-group m-3">
+   <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor=" let payment  of  filteredPayments">
+  
+   <strong> Patient ID: </strong> {{payment.patientId}} 
+   <strong> Payment Method: </strong>   {{payment.method}}
+   <strong>Amount Paid: </strong>   {{payment.amount}}
+   <strong> Payment Description: </strong>   {{payment.paymentDescription}}
+    <strong> Payment Date: </strong>   {{payment.datePayment}}
+    
+    <button class="btn btn-primary ">View</button>
+      </li>
+  
+    </ul>
+  </div>
+</div>

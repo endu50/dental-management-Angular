@@ -2,22 +2,35 @@
   <h4>Generate Receipt</h4>
   <form [formGroup]="receiptForm" (ngSubmit)="submit()">
     <div class="mb-3">
-      <input class="form-control" placeholder="Patient Name" formControlName="patientId" />
+      <input class="form-control" (change)="filterPayment($event)" placeholder="Patient Id" formControlName="patientId" />
+    </div>
+        <div class="mb-3" *ngIf="patients">
+      <label class="form-control" >Patient Name</label>
+       {{patients.fullName}}
+    </div>
+    <div *ngFor="let payment of payments">
+    <div class="mb-3">
+      <label class="form-control" >Payment Description</label>
+        {{payment.paymentDescription}}
+    </div>
+  
+    <div class="mb-3">
+      <label class="form-control" >Amount Paid</label>
+        {{payment.amount}}
+    </div>
+      <div class="mb-3">
+      <label class="form-control" >Payment Date</label>
+        {{payment.datePayment}}
     </div>
     <div class="mb-3">
-      <input class="form-control" placeholder="Service" formControlName="paymentStatus" />
+      <label class="form-control" >Payment Method</label>
+        {{payment.method}}
     </div>
-    <div class="mb-3">
-      <input type="number" class="form-control" placeholder="Amount Paid" formControlName="amount" />
     </div>
-    <div class="mb-3">
-      <select class="form-select" formControlName="method">
-        <option value="Cash">Cash</option>
-        <option value="Card">Card</option>
-        <option value="Mobile">Mobile</option>
-      </select>
+      <div class="mb-3">
+      <input type="datetime" class="form-control" formControlName="issuedDate" placeholder="Issued Date" />
     </div>
-    <button class="btn btn-primary" type="submit">Generate Receipt</button>
+    <button class="btn btn-primary" type="submit">Print Receipt</button>
   </form>
 
   <div *ngIf="generatedReceipt" class="mt-5 border p-3">

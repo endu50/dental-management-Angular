@@ -14,17 +14,19 @@ import { VerifyOtpComponentComponent } from './verify-otp-component/verify-otp-c
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { RecieptComponent } from './reciept/reciept.component';
+import { PaymentDetailComponent } from './payment-detail/payment-detail.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent }, // Home route
     { path: 'home', component: HomeComponent },
-     { path: 'dashboard', component: DashboardComponent },
+    { path: 'dashboard', component: DashboardComponent },
     { path: 'register', component: PatientRegisterComponent },
     { path: 'appointment', component: AppointmentComponent },
     { path: 'appointmentaction', component: AppointcrudComponent },
     { path: 'patientaction', component: PatientcrudComponent },
     { path: 'adminaccount', component: AdminaccountComponent },
-      { path: 'payment', component: PaymentsComponent },
+        { path: 'payment', component: PaymentsComponent },
+        { path: 'payment-detail', component: PaymentDetailComponent },
     { path: 'login', component: LoginComponent },
     { path: 'resetpassword', component: ForgetpasswordComponent },
     { path: 'reset-password', component: ResetPasswordComponent },

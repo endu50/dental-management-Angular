@@ -55,7 +55,6 @@ printReciept(){
 }
 onChangeHandler(event: Event) {
   const inputValue = Number((event.target as HTMLInputElement).value);
-  console.log('Changed value:', inputValue);
    this.patientser.getPatientId(inputValue).subscribe({  
     next: (data) => {
       if (data ) {

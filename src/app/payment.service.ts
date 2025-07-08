@@ -26,6 +26,11 @@ getPayment():Observable<payment[]>
   return this.http.get<payment[]>(this.baseUrl);
 }
 
+getPaymentById(id :number):Observable<payment[]>{
+  
+ return this.http.get<payment[]>(`${this.baseUrl}/patient/${id}`);
+}
+
 createPayment(payments: payment):Observable<any>{
 
   return this.http.post(this.baseUrl ,payments);
