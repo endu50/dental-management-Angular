@@ -125,7 +125,7 @@ resetForm(){
   loadAllPatients(){
    this.patientservice.getAllPatients().subscribe({
     next: (data)=> (this.patients = data),
-    error: () =>(this.errorMessage='Failed to Load Patient')
+    error: () =>{ alert("failed to load data");}
    })
   }
 

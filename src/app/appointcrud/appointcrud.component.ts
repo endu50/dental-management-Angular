@@ -46,7 +46,7 @@ export class AppointcrudComponent implements OnInit {
   loadAllAppointments() {
     this.appointService.getAllAppointments().subscribe({
       next: (data) => (this.appointments = data),
-      error: () => (this.errorMessage = 'Failed to load appointments')
+      error: () => { alert("failed to load data");}
     });
   }
 

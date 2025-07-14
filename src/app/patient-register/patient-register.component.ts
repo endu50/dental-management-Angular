@@ -15,8 +15,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 export class PatientRegisterComponent implements OnInit {
   patientForm!: FormGroup;
   submitted = false;
+  patientIdAfterSubmit: number | null = null; // 👈 store the patientId
 
-  constructor(private fb: FormBuilder, private patientService: PatientService) {}
+  constructor(private fb: FormBuilder, public patientService: PatientService) {}
 
   ngOnInit(): void {
     this.patientForm = this.fb.group({
@@ -35,11 +36,15 @@ export class PatientRegisterComponent implements OnInit {
     if (this.patientForm.invalid) return;
 
     const patient: Patient = this.patientForm.value;
-    this.patientService.registerPatient(patient).subscribe(() => {
+    this.patientService.registerPatient(patient).subscribe({
+      next: (data)=> {
       console.log("the form value",this.patientForm.value);
       alert('Patient registered successfully');
-      this.patientForm.reset();
+       this.patientIdAfterSubmit=data.id;
+       this.patientForm.reset();
       this.submitted = false;
+      },
+      error : ()=>{}
     });
   }
 

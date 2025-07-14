@@ -1,44 +1,80 @@
 <div class="container mt-4">
-  <h4>Generate Receipt</h4>
-  <form [formGroup]="receiptForm" (ngSubmit)="submit()">
-    <div class="mb-3">
-      <input class="form-control" (change)="filterPayment($event)" placeholder="Patient Id" formControlName="patientId" />
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0"><i class="bi bi-receipt-cutoff"></i> Generate Receipt</h5>
+      <div class="text-end">
+      <button type="button" class="btn btn-secondary " (click)="onClear()">Clear</button>
+      </div>
     </div>
-        <div class="mb-3" *ngIf="patients">
-      <label class="form-control" >Patient Name</label>
-       {{patients.fullName}}
-    </div>
-    <div *ngFor="let payment of payments">
-    <div class="mb-3">
-      <label class="form-control" >Payment Description</label>
-        {{payment.paymentDescription}}
-    </div>
-  
-    <div class="mb-3">
-      <label class="form-control" >Amount Paid</label>
-        {{payment.amount}}
-    </div>
-      <div class="mb-3">
-      <label class="form-control" >Payment Date</label>
-        {{payment.datePayment}}
-    </div>
-    <div class="mb-3">
-      <label class="form-control" >Payment Method</label>
-        {{payment.method}}
-    </div>
-    </div>
-      <div class="mb-3">
-      <input type="datetime" class="form-control" formControlName="issuedDate" placeholder="Issued Date" />
-    </div>
-    <button class="btn btn-primary" type="submit">Print Receipt</button>
-  </form>
 
-  <div *ngIf="generatedReceipt" class="mt-5 border p-3">
-    <h5>Receipt</h5>
-    <p><strong>Patient:</strong> {{ generatedReceipt.patientId }}</p>
-    <p><strong>Service:</strong> {{ generatedReceipt.paymentStatus }}</p>
-    <p><strong>Amount Paid:</strong> {{ generatedReceipt.amount | currency }}</p>
-    <p><strong>Payment Method:</strong> {{ generatedReceipt.method }}</p>
-    <p><strong>Date:</strong> {{ generatedReceipt.datePayment | date }}</p>
+    <div class="card-body">
+      <form [formGroup]="receiptForm" (ngSubmit)="submit()">
+        <!-- Patient and Payment Date -->
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Patient ID</label>
+            <input class="form-control form-control-sm" (change)="filterPayment($event)"
+              placeholder="Enter Patient ID" formControlName="patientId" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Payment Date</label>
+            <input type="datetime-local" (change)="filterDate()" class="form-control form-control-sm"
+              formControlName="datePayment" />
+          </div>
+        </div>
+
+        <!-- Date Range -->
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-control form-control-sm" formControlName="startDate" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control form-control-sm"  formControlName="endDate" />
+          </div>
+        </div>
+
+        <!-- Patient Name -->
+        <div *ngIf="patients" class="alert alert-light border-start border-4 border-primary mb-3">
+          <strong>Patient Name:</strong> {{ patients.fullName }}
+        </div>
+
+        <!-- Payments List -->
+        <div *ngFor="let payment of payments" class="border rounded p-2 mb-3 bg-light">
+          <div class="row mb-1">
+            <div class="col-md-3"><strong>Description:</strong></div>
+            <div class="col-md-9">{{ payment.paymentDescription }}</div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-3"><strong>Amount:</strong></div>
+            <div class="col-md-9 text-success fw-semibold">{{ payment.amount | currency }}</div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-3"><strong>Date:</strong></div>
+            <div class="col-md-9">{{ payment.datePayment | date:'short' }}</div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-3"><strong>Method:</strong></div>
+            <div class="col-md-9">{{ payment.method }}</div>
+          </div>
+        </div>
+
+        <!-- Issued Date -->
+        <div class="row g-2 mb-4">
+          <div class="col-md-3">
+            <label class="form-label">Issued Date</label>
+            <input type="datetime-local" class="form-control form-control-sm"
+              formControlName="issuedDate" />
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="btn btn-success btn-sm px-4" type="submit">
+          <i class="bi bi-printer"></i> Print Receipt
+        </button>
+      </form>
+    </div>
   </div>
 </div>
+ 

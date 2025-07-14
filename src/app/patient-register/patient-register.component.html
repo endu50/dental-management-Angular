@@ -4,6 +4,9 @@
   <div class="card shadow-lg">
     <div class="card-header">
 <h2 class="text-center mt-5 bg-primary-subtle ">Patient Registration Page</h2>
+<div *ngIf="patientIdAfterSubmit" class="alert alert-success mt-3">
+  <strong>New Patient ID:</strong> {{ patientIdAfterSubmit }}
+</div>
 </div>
 <div class="card-body">
 <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">

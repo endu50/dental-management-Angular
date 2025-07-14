@@ -19,6 +19,9 @@ searchDate : string="";
 searchDateFirst : string="";
 searchDateEnd : string="";
 
+page: number = 1;
+pageSize: number = 7;
+
   constructor(private paymentser: PaymentService, private fb: FormBuilder) {
 
   }
@@ -28,6 +31,10 @@ searchDateEnd : string="";
 
  this.formPayment=this.fb.group({
   paymentId: ['',Validators.required],
+    datePayment: ['',Validators.required],
+      datePaymentFirst: ['',Validators.required],
+        datePaymentEnd: ['',Validators.required]
+
 
      });
    this.getPayments();
@@ -45,7 +52,7 @@ get filteredPayments(): payment[] {
      ? new Date(p.datePayment).toISOString().slice(0, 10).includes(this.searchDate)
       : true;
 
-      
+
       const paymentDate = new Date(p.datePayment);
     const startDate = this.searchDateFirst ? new Date(this.searchDateFirst) : null;
     const endDate = this.searchDateEnd ? new Date(this.searchDateEnd) : null;
@@ -55,6 +62,17 @@ get filteredPayments(): payment[] {
       (!endDate || paymentDate <= endDate);
     return matchText && matchDate && matchDateRange;
   });
+}
+get formControl()
+{
+  return {
+   patientId: this.formPayment.get('patientId'),
+   datePayment:  this.formPayment.get('datePayment')
+  }; 
+  
+}
+clearInput(){
+this.formPayment.reset();
 }
 
  getPayments()
@@ -66,9 +84,17 @@ get filteredPayments(): payment[] {
           this.payments=data;
       } 
     },
-      error : ()=>{}
+      error : ()=>{  alert("failed to load data");}
       
     })
  }
+
+ getPage(){
+    const start = (this.page - 1) * this.pageSize;
+    return this.filteredPayments.slice(start, start + this.pageSize);
+ }
+   get totalPages() {
+    return Math.ceil(this.filteredPayments.length / this.pageSize);
+  }
 
 }

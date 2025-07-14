@@ -32,8 +32,8 @@
             <strong>{{ pat.fullName }}</strong> | <span *ngIf="pat.email"> | {{ pat.email}} </span> | <span> {{ pat.phone }} </span>
           </div>
           <div>
-            <button class="btn btn-sm btn-info me-2" (click)="editPatient(pat)" >Edit</button>
-            <button class="btn btn-sm btn-danger" (click)="deletePatientById(pat.id!)" >Delete</button>
+            <button class="btn btn-sm btn-info me-2" (click)="editPatient(pat)" > <i class="bi bi-pencil-fill"></i>  Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deletePatientById(pat.id!)" > <i class="bi bi-trash-fill"></i>  Delete</button>
           </div>
         </li>
       </ul>
