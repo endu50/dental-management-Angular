@@ -51,13 +51,16 @@ export class ForgetpasswordComponent implements OnInit {
         );
 
           if(matchedAccount){
-            alert('email is matched for reset ppassword');
+               alert('email is matched for reset ppassword');
             this.auth.resetLink(useremail).subscribe({
               next:()=>{
+             
                 alert("Password Rest Link send to your email");
               },
-              error:()=>{ 
-                alert("faile to send the reset link");
+              error:(err)=>{ 
+                  console.error("Reset link error:", err);
+                alert("failed to send the reset link");
+                
               }
 
             })

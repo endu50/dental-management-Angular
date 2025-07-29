@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit{
 
   /**
    *
@@ -16,6 +16,10 @@ export class HomeComponent {
   }
     Onappoint(){
     this.router.navigate(['/register']);
+  }
+
+  ngOnInit(): void {
+    
   }
     
 }

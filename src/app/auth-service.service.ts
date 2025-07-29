@@ -24,6 +24,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+     localStorage.removeItem('token_expiry');
     this.router.navigate(['/login']);
   }
   registerAccount(account :Account):Observable<any>{
@@ -46,8 +47,14 @@ export class AuthService {
     token, newPassword
   });
 }
-sendOtp(PhoneNumber: string): Observable<any> {
-  return this.http.post('http://localhost:5139/api/auth/send-otp', { PhoneNumber });
+// sendOtp(PhoneNumber: string): Observable<any> {
+//   return this.http.post('http://localhost:5139/api/auth/send-otp', { PhoneNumber });
+// }
+sendOtp(phoneNumber: string) {
+  return this.http.post('http://localhost:5139/api/auth/send-otp', phoneNumber, {
+    headers: { 'Content-Type': 'application/json' },
+    responseType: 'text'
+  });
 }
 
 verifyOtp(PhoneNumber: string, otp: string): Observable<any> {

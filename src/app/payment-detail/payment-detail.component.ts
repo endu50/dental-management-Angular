@@ -21,6 +21,7 @@ searchDateEnd : string="";
 
 page: number = 1;
 pageSize: number = 7;
+totalSummery: number=0;
 
   constructor(private paymentser: PaymentService, private fb: FormBuilder) {
 
@@ -42,15 +43,19 @@ pageSize: number = 7;
   } 
 
 get filteredPayments(): payment[] {
+  this.searchText= this.formPayment.get('paymentId')?.value;
+  this.searchDate = this.formPayment.get('datePayment')?.value;
+  this.searchDateFirst = this.formPayment.get('datePaymentFirst')?.value;
+  this.searchDateEnd = this.formPayment.get('datePaymentEnd')?.value;
   return this.payments.filter(p => {
     const matchText = this.searchText
       ? p.patientId?.toLowerCase().includes(this.searchText.toLowerCase()) ||
         p.method?.toLowerCase().includes(this.searchText.toLowerCase())
       : true;
 
-     const matchDate = this.searchDate
-     ? new Date(p.datePayment).toISOString().slice(0, 10).includes(this.searchDate)
-      : true;
+    //  const matchDate = this.searchDate
+    //  ? new Date(p.datePayment).toISOString().slice(0, 10).includes(this.searchDate.toLowerCase())
+    //   : true;
 
 
       const paymentDate = new Date(p.datePayment);
@@ -60,8 +65,13 @@ get filteredPayments(): payment[] {
     const matchDateRange =
       (!startDate || paymentDate >= startDate) &&
       (!endDate || paymentDate <= endDate);
-    return matchText && matchDate && matchDateRange;
+    return matchText  && matchDateRange;
   });
+
+ 
+}
+get totalSummeryValue(): number {
+  return  this.totalSummery = this.filteredPayments.reduce((sum, payment) => sum + payment.amount,0)
 }
 get formControl()
 {

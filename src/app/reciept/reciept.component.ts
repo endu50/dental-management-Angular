@@ -15,6 +15,9 @@ receiptForm: FormGroup;
   generatedReceipt: payment | null = null;
   payments : payment []=[];
   patients : Patient | null =null;
+  totalpay: number=0;
+  
+
 
   constructor(private fb: FormBuilder, private receiptService: PaymentService,private patientSer :PatientService) {
    this.receiptForm = this.fb.group({
@@ -24,18 +27,20 @@ receiptForm: FormGroup;
   amount: [''],
   datePayment: [''],
   method: [''],
-  issuedDate: ['', Validators.required],
+  issuedDate: [''],
   startDate: [''],   // ✅ new
-  endDate: ['']      // ✅ new
+  endDate: [''],    // ✅ new
+  //totalPayments: ['']
 });
 ;
   }
-  ngOnInit(): void {
-
+ngOnInit(): void {
   this.receiptForm.patchValue({ issuedDate: new Date().toISOString().substring(0, 16) });
-    
-  }
-    
+
+  this.receiptForm.get('startDate')?.valueChanges.subscribe(() => this.filterDate());
+  this.receiptForm.get('endDate')?.valueChanges.subscribe(() => this.filterDate());
+
+}
 
   getPatiendId()
   {
@@ -90,6 +95,7 @@ filterPayment(event: Event) {
   this.receiptService.getPaymentById(patientId).subscribe({
     next: (data) => {
       if (data && data.length > 0) {
+        this.filteredPayments = [...this.payments]; 
         this.payments = data.filter(payment => {
           const paymentDate = new Date(payment.datePayment);
           const isAfterStart = startDate ? paymentDate >= startDate : true;
@@ -122,54 +128,34 @@ filterPayment(event: Event) {
     }
   });
 }
-  filterDate() {
-  const patientId = Number(this.receiptForm.get('patientId')?.value);
-  const startDateStr = this.receiptForm.get('datePayment')?.value;
+ filteredPayments: payment[] = [];
 
-  if (!patientId) {
-    alert('Please enter a valid Patient ID.');
-    return;
-  }
+filterDate(): void {
+  const startDateStr = this.receiptForm.get('startDate')?.value;
+  const endDateStr = this.receiptForm.get('endDate')?.value;
 
   const startDate = startDateStr ? new Date(startDateStr) : null;
+  const endDate = endDateStr ? new Date(endDateStr) : null;
 
-  this.receiptService.getPaymentById(patientId).subscribe({
-    next: (data) => {
-      if (data && data.length > 0) {
-        this.payments = data.filter(payment => {
-          const paymentDate = new Date(payment.datePayment);
-          const isSameDate = startDate
-            ? paymentDate.toISOString().split('T')[0] === startDate.toISOString().split('T')[0]
-            : true;
+  this.filteredPayments = this.payments.filter(payment => {
+    const paymentDate = new Date(payment.datePayment);
 
-          return isSameDate;
-        });
+    const matchDateRange =
+      (!startDate || paymentDate >= startDate) &&
+      (!endDate || paymentDate <= endDate);
+       return matchDateRange ;
+ // Calculate Total Amount after filtering
 
-        if (this.payments.length === 0) {
-          alert('No payments found on selected date.');
-        }
-
-        const firstPayment = this.payments[0];
-        if (firstPayment) {
-          this.receiptForm.patchValue({
-            paymentDescription: firstPayment.paymentDescription,
-            amount: firstPayment.amount,
-            method: firstPayment.method,
-            datePayment: firstPayment.datePayment
-          });
-        }
-
-      } else {
-        alert('No payments found for this patient.');
-        this.payments = [];
-      }
-    },
-    error: (err) => {
-      console.error('Error fetching payments:', err);
-      alert('Error retrieving payment data.');
-    }
   });
+    const totalAmount = this.filteredPayments.reduce((sum, payment) => sum + payment.amount, 0);
+
+  // Patch the total to the Form Control
+  //this.receiptForm.patchValue({ totalPayments: totalAmount });
+
+  this.totalpay=totalAmount;
+   
 }
+
 
 
 onPaymentSelect(event: Event) {
@@ -196,18 +182,44 @@ onClear()
 {
   this.receiptForm.reset();
   this.patients = null;
-  this.payments = [];
+    this.payments = [];
+  this.filteredPayments = [];
    this.receiptForm.patchValue({
     issuedDate: new Date().toISOString().substring(0, 16)});
+      //totalPayments: 0
   
 }
 
   submit() {
     if (this.receiptForm.valid) {
-      this.receiptService.generateReceipt(this.receiptForm.value).subscribe({
-        next: (res) => this.generatedReceipt = res,
-        error: (err) => alert('Error: ' + err.message)
-      });
+
+const printContents = document.getElementById('receipt-content')?.innerHTML;
+  if (printContents) {
+    const popupWin = window.open('', '_blank', 'width=800,height=700');
+    if (popupWin) {
+      popupWin.document.open();
+      popupWin.document.write(`
+        <html>
+          <head>
+            <title>Receipt</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              .receipt { border: 1px solid #ccc; padding: 15px; margin: auto; width: 80%; }
+              h2 { text-align: center; }
+              .row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+              .label { font-weight: bold; }
+            </style>
+          </head>
+          <body onload="window.print(); window.close();">
+            <div class="receipt">
+              ${printContents}
+            </div>
+          </body>
+        </html>
+      `);
+      popupWin.document.close();
+    }
+  }
     }
   }
 }

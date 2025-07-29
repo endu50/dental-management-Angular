@@ -47,6 +47,7 @@ patient: Patient | null = null;
   {
     this.form.reset();
       this.patient = null;
+       this.form.patchValue({ datePayment: new Date().toISOString().substring(0, 16) });
   }
 printReciept(){
  

@@ -2,13 +2,12 @@
    <h1 class="text-primary mb-3">Detail Payment and Search</h1>
     <form [formGroup]="formPayment">
    <div class="row">
+    <div class="col-md-3">
+      <label class="form-label"><strong>Enter PatientId | PaymentMethod:</strong></label>
+    </div>
     <div class="col-md-4 mb-3">
     <!-- <label class="form-label"><strong>Search Payment by Id and Payment Method </strong> </label> -->
-    <input type="text" class="form-control" [(ngModel)]="searchText" placeholder="Search Payment by PatientId and Payment Method" formControlName="paymentId">
-    </div>
-  <div class="col-md-4 mb-3">
-    <!-- <label class="form-label w-25"> <strong>Search by Payment Date </strong></label> -->
-    <input type="datetime-local" class="form-control" [(ngModel)]="searchDate" placeholder="Search Payment by Date" formControlName="datePayment">
+    <input type="text" class="form-control" placeholder="Search Payment by PatientId and Payment Method" formControlName="paymentId">
     </div>
       <!-- <div class="col-md-2">
  <button class="btn btn-secondary " (click)="clearInput()"> Clear </button>
@@ -17,17 +16,19 @@
   <div class="row">
     <div class="col-md-4">
      <!-- <label class="form-label w-25"> <strong>Select First Date </strong></label> -->
-   <strong>Select First Date </strong> <input type="datetime-local" class="form-control" [(ngModel)]="searchDateFirst"
+   <strong>Select First Date </strong> <input type="datetime-local" class="form-control"
                placeholder="Search Payment by First Date" formControlName="datePaymentFirst">
 </div>
 <div class="col-md-4">
      <!-- <label class="form-label w-25"> <strong>Select Last Date </strong></label> -->
-   <strong>Select Last Date </strong> <input type="datetime-local" class="form-control" [(ngModel)]="searchDateEnd" 
+   <strong>Select Last Date </strong> <input type="datetime-local" class="form-control" 
    placeholder="Search Payment by Last Date" formControlName="datePaymentEnd">
   </div>
-  <div class="col-md-2">
+ 
+  <div class="col-md-2 mb-3">
  <button type="button" (click)="clearInput()" class="btn btn-secondary ">Clear</button>
   </div>
+   <div class="bg-success text-end mt-3 fs-4"  *ngIf="filteredPayments"><Strong>Total Summery Birr:=</Strong>{{ totalSummeryValue | currency}} </div>  
   </div>
 </form>
 </div>

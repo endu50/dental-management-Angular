@@ -1,11 +1,147 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { AppointService } from '../appoint.service';
+import { Appoint } from '../appoint.service';
+import { PatientService } from '../patient.service';
+import { Patient } from '../patient.service';
+import { PaymentService } from '../payment.service';
+import { payment } from '../payment.service';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
+  Appoints: Appoint[] = [];
+  Patients: Patient []= [];
+  Payments: payment [] = [];
+  todayAppointmentsCount: number = 0;
+  totalPatient : number = 0;
+  pendingPayments : number = 0;
+  onlinePayments : number =0;
+  cashPayments : number =0;
+
+  constructor(private appoints: AppointService, private patients :PatientService, private payments : PaymentService) {}
+
+  ngOnInit(): void {
+
+    this.appointmentNumber();
+    this.getPatients();
+    this.getPendingBills();
+    this.getOnlinePayment();
+    this.getCashPayment();
+
+  }
+   appointmentNumber() :void{
+        const todayStr = new Date().toISOString().slice(0, 10); // Format: 'YYYY-MM-DD'
+        var numb: number=0;
+
+    this.appoints.getAllAppointments().subscribe({
+      next: (data) => {
+        if (data.length > 0) {
+          this.Appoints = data;
+
+          // Count appointments that match today's date
+          this.todayAppointmentsCount = this.Appoints.filter(appoint => {
+            const appointDateStr = new Date(appoint.appointmentDate).toISOString().slice(0, 10);
+            return appointDateStr === todayStr;
+          }).length;
+
+          console.log("Number of appointments today:", this.todayAppointmentsCount);
+
+          numb=this.todayAppointmentsCount;
+         
+        }
+      },
+      error: (err) => {
+        console.error("Error fetching appointments:", err);
+        alert("Error fetching appointments");
+     
+      }
+    });
+     
+  }
+
+getPatients(): void {
+ 
+   this.patients.getAllPatients().subscribe({
+    next:(data)=> {
+     if(data.length >0){
+       this.Patients =data;
+       this.totalPatient= this.Patients.filter(patient => {
+       const Patientvalue= patient.id
+       return Patientvalue;
+      
+       }).length
+        console.log("Total Patients:", this.totalPatient);
+     }
+    },
+    error: (err)=> {
+      console.error("Error fetching patients:", err);
+      alert("Error fetching patients");
+    }
+   });   
+  }
+  getPendingBills(){
+
+    this.payments.getPayment().subscribe({
+      next:(data)=>{
+        if(data.length > 0) {
+         this.Payments = data;
+          this.pendingPayments= this.Payments.filter(payment => {
+            const pendingPay= payment.paymentStatus === 'Pending'
+            return pendingPay;
+          }).length
+           console.log("Total Payment Pending:", this.pendingPayments);
+        }
+      },
+      error: (err)=> {
+        console.log("error fetching Pyment Detail"+ err);
+        alert("error fetching Payment Detail");
+      }
+    })
+
+  }
+  getOnlinePayment()
+  {
+    this.payments.getPayment().subscribe({
+      next:(data)=>{
+        if(data.length > 0) {
+         this.Payments = data;
+          this.onlinePayments= this.Payments.filter(payment => {
+            const pendingPay= payment.method === 'online'
+            return pendingPay;
+          }).length
+           console.log("Total Online Payments:", this.onlinePayments);
+        }
+      },
+      error: (err)=> {
+        console.log("error fetching Pyment Method"+ err);
+        alert("error fetching Payment Method");
+      }
+    })
+  }
+    getCashPayment()
+  {
+    this.payments.getPayment().subscribe({
+      next:(data)=>{
+        if(data.length > 0) {
+         this.Payments = data;
+          this.cashPayments= this.Payments.filter(payment => {
+            const pendingPay= payment.method === 'cash'
+            return pendingPay;
+          }).length
+           console.log("Total cash Payments:", this.cashPayments);
+        }
+      },
+      error: (err)=> {
+        console.log("error fetching Pyment Method"+ err);
+        alert("error fetching Payment Method");
+      }
+    })
+  }
+
+   
 }

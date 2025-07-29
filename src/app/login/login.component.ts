@@ -34,8 +34,14 @@ export class LoginComponent {
           localStorage.setItem('token', res.token); // Store JWT
           if (localStorage.getItem('token')===res.token) {
           console.log("Successfllly Login!!!");
+          localStorage.setItem('token', res.token);
+          const tokenPayload = JSON.parse(atob(res.token.split('.')[1]));
+          const expiryTime = tokenPayload.exp * 1000; // Convert to milliseconds
+
+          localStorage.setItem('token_expiry', expiryTime.toString());
           this.router.navigate(['/home']);
           this.forgetpassowrd = false;
+          
           }
           else {
             alert('Incorrect Email Or Password');
