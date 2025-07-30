@@ -145,7 +145,8 @@ resetForm(){
   get filteredPatients() {
     return this.patients.filter(a =>
       a.fullName.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      a.phone.toLowerCase().includes(this.searchText.toLowerCase())
+      a.phone.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      a.id?.toString().includes(this.searchText.toLowerCase())
     );
   }
   get paginatedPatints() {

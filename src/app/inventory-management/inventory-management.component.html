@@ -1,0 +1,45 @@
+<div class="container mt-4">
+  <h2>Dental Supplies Inventory</h2>
+
+  <form [formGroup]="supplyForm" (ngSubmit)="submitForm()" class="row g-2 mb-4">
+    <div class="col-md-3"><input class="form-control" formControlName="itemName" placeholder="Item Name"></div>
+    <div class="col-md-2"><input class="form-control" formControlName="category" placeholder="Category"></div>
+    <div class="col-md-2"><input type="number" class="form-control" formControlName="quantity" placeholder="Quantity"></div>
+    <div class="col-md-2"><input class="form-control" formControlName="unit" placeholder="Unit"></div>
+    <div class="col-md-2"><input type="number" class="form-control" formControlName="reorderLevel" placeholder="Reorder Level"></div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-primary w-100">{{ isEditMode ? 'Update' : 'Add' }}</button>
+    </div>
+  </form>
+
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Item Name</th>
+        <th>Category</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Reorder Level</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let supply of supplies; let i = index" [ngClass]="{'table-danger': supply.quantity <= supply.reorderLevel}">
+        <td>{{ i + 1 }}</td>
+        <td>{{ supply.itemName }}</td>
+        <td>{{ supply.category }}</td>
+        <td>{{ supply.quantity }}</td>
+        <td>{{ supply.unit }}</td>
+        <td>{{ supply.reorderLevel }}</td>
+        <td>
+          <button class="btn btn-sm btn-info me-2" (click)="editSupply(supply)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteSupply(supply.id!)">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="supplies.length === 0">
+        <td colspan="7" class="text-center text-muted">No Supplies Found</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

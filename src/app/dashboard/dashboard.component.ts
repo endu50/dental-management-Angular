@@ -6,6 +6,8 @@ import { Patient } from '../patient.service';
 import { PaymentService } from '../payment.service';
 import { payment } from '../payment.service';
 import { CommonModule } from '@angular/common';
+import { Supply, SupplyService } from '../supply.service';
+
 @Component({
   selector: 'app-dashboard',
   imports: [CommonModule],
@@ -17,13 +19,16 @@ export class DashboardComponent implements OnInit {
   Appoints: Appoint[] = [];
   Patients: Patient []= [];
   Payments: payment [] = [];
+  Supplies: Supply [] = [];
   todayAppointmentsCount: number = 0;
   totalPatient : number = 0;
   pendingPayments : number = 0;
   onlinePayments : number =0;
   cashPayments : number =0;
+  LowQuantity : number = 0;
 
-  constructor(private appoints: AppointService, private patients :PatientService, private payments : PaymentService) {}
+  constructor(private appoints: AppointService, private patients :PatientService, 
+    private payments : PaymentService, private supply: SupplyService) {}
 
   ngOnInit(): void {
 
@@ -32,6 +37,7 @@ export class DashboardComponent implements OnInit {
     this.getPendingBills();
     this.getOnlinePayment();
     this.getCashPayment();
+    this.getInventory();
 
   }
    appointmentNumber() :void{
@@ -142,6 +148,24 @@ getPatients(): void {
       }
     })
   }
-
+ getInventory()
+  {
+    this.supply.getAllSupplies().subscribe({
+      next:(data)=>{
+        if(data.length > 0) {
+         this.Supplies = data;
+          this.LowQuantity= this.Supplies.filter(supply => {
+            const pendingPay= supply.quantity <= 5
+            return pendingPay;
+          }).length
+           console.log("Total Low Quantity Item are:", this.LowQuantity);
+        }
+      },
+      error: (err)=> {
+        console.log("error fetching inventory detail"+ err);
+        alert("error fetching qinventory detail");
+      }
+    })
+  }
    
 }

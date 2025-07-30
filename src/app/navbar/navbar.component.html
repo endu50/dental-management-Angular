@@ -30,6 +30,9 @@
                    <li class="nav-item">
               <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/payment-detail" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Payment Detail</a>
             </li>
+                      <li class="nav-item">
+              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/inventory-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inventory Detail</a>
+            </li>
                <li class="nav-item">
               <a   *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
             </li>

@@ -8,6 +8,7 @@ export interface Appoint {
   appointmentDate: Date;
   treatmentType: string;
   dentistName: string;
+  status: string;
 }
 
 @Injectable({

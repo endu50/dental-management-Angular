@@ -51,24 +51,36 @@
       <!-- Appointments Table -->
        <div class="col-md-6">
       <div class="card">
-        <div class="card-header fw-bold">Recent Appointments</div>
+        <div class="card-header fw-bold  bg-warning">Recent Appointments</div>
         <div class="card-body p-0">
           <table class="table table-bordered mb-0">
-            <thead class="table-light">
+            <thead class="table-info">
               <tr>
+                <th>OrderNo</th>
                 <th>patientName</th>
                 <th>treatmentType</th>
                 <th>dentistName</th>
                 <th>appointmentDate</th>
+                <th>Status</th>
               </tr>
             </thead>
                <tbody>
-        <tr *ngFor="let appoint of Appoints; let i = index">
+        <tr *ngFor="let appoint of Appoints | slice:0:5; let i = index">
           <td>{{ i + 1 }}</td>
           <td>{{ appoint.patientName }}</td>
           <td>{{ appoint.treatmentType }}</td>
           <td>{{ appoint.dentistName }}</td>
           <td>{{ appoint.appointmentDate | date:'shortDate' }}</td>
+           <td >
+            <span [ngClass]="{
+          'badge bg-success': appoint.status === 'completed',
+          'badge bg-warning text-dark': appoint.status === 'pending',
+          'badge bg-danger': appoint.status === 'canceled'
+
+            }">
+            {{ appoint.status }}
+          </span>
+          </td>
         </tr>
         <tr *ngIf="Appoints.length === 0">
           <td colspan="5" class="text-center text-muted">No Appointments Found</td>
@@ -96,5 +108,40 @@
             </div>
           </div>
       </div>
+                     <div class="col-md-4 mt-3">
+       <div class="card text-white bg-warning">
+            <div class="card-body">
+              <h5 class="card-title">Inventory Record Minimum</h5>
+              <p class="card-text fs-3">{{LowQuantity}}</p>
+            </div>
+          </div>
+      </div>
+      <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>Item Name</th>
+        <th>Category</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Reorder Level</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let supply of Supplies; let i = index" [ngClass]="{'table-danger': supply.quantity <= supply.reorderLevel}">
+        <td>{{ i + 1 }}</td>
+        <td>{{ supply.itemName }}</td>
+        <td>{{ supply.category }}</td>
+        <td>{{ supply.quantity }}</td>
+        <td>{{ supply.unit }}</td>
+        <td>{{ supply.reorderLevel }}</td>
+
+      </tr>
+      <tr *ngIf="Supplies.length === 0">
+        <td colspan="7" class="text-center text-muted">No Supplies Found</td>
+      </tr>
+    </tbody>
+  </table>
   <!-- </div> -->
 </div>

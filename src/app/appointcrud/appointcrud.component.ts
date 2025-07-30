@@ -35,7 +35,8 @@ export class AppointcrudComponent implements OnInit {
       patientName: ['', [Validators.required, Validators.minLength(3)]],
       appointmentDate: ['', Validators.required],
       treatmentType: ['', Validators.required],
-      dentistName: ['', Validators.required]
+      dentistName: ['', Validators.required],
+      status: ['']
     });
   }
   get f() {

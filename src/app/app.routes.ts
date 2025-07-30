@@ -15,6 +15,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { RecieptComponent } from './reciept/reciept.component';
 import { PaymentDetailComponent } from './payment-detail/payment-detail.component';
+import { InventoryManagementComponent } from './inventory-management/inventory-management.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent }, // Home route
@@ -27,6 +28,7 @@ export const routes: Routes = [
     { path: 'adminaccount', component: AdminaccountComponent },
         { path: 'payment', component: PaymentsComponent },
         { path: 'payment-detail', component: PaymentDetailComponent },
+         { path: 'inventory-management', component: InventoryManagementComponent },
     { path: 'login', component: LoginComponent },
     { path: 'resetpassword', component: ForgetpasswordComponent },
     { path: 'reset-password', component: ResetPasswordComponent },
