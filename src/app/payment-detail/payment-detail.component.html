@@ -40,14 +40,41 @@
     <ul class="list-group m-3">
 
    <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor=" let payment  of   getPage() ">
-  
+
+  <strong> PaymentId: </strong> {{payment.id}} 
    <strong> Patient ID: </strong> {{payment.patientId}} 
    <strong> Payment Method: </strong>   {{payment.method}}
    <strong>Amount Paid: </strong>   {{payment.amount}}
    <strong> Payment Description: </strong>   {{payment.paymentDescription}}
     <strong> Payment Date: </strong>   {{payment.datePayment}}
+     <!-- <strong> Payment status: </strong>   {{payment.paymentStatus}} 
+     <strong> Payment status: </strong> <input [(ngModel)]="payment.paymentStatus" class="form-control w-auto" /> -->
+<!-- 
+  <select class="form-select w-auto" [(ngModel)]="payment.paymentStatus">
+  <option value="Pending">pending</option>
+  <option value="Completed">completed</option>
+</select> -->
+<div class="d-flex align-items-center gap-2">
+  <select class="form-select w-auto" [(ngModel)]="payment.paymentStatus">
+    <option value="pending">pending</option>
+    <option value="completed">completed</option>
+  </select>
+
+  <span class="badge"
+        [ngClass]="{
+          'bg-success': payment.paymentStatus === 'completed',
+          'bg-warning text-dark': payment.paymentStatus === 'pending'
+        }">
+    {{ payment.paymentStatus }}
+  </span>
+</div>
+
+
+
     
-    <button class="btn btn-primary ">Update</button>
+    <button class="btn btn-primary" 
+    [disabled]="payment.paymentStatus === payment.originalPaymentStatus"
+    (click)="updatePaymentStatus(payment)">Update</button> 
       </li>
   
     </ul>

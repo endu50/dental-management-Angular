@@ -1,0 +1,120 @@
+<div class="container mt-4">
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link" 
+         [class.active]="activeFilter === 'Registration Supply'" 
+         (click)="activeFilter = 'Registration Supply'" href="javascript:void(0);">
+        Registration Supply
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" 
+         [class.active]="activeFilter === 'StockOut Form'" 
+         (click)="activeFilter = 'StockOut Form'" href="javascript:void(0);">
+        StockOut Form
+      </a>
+    </li>
+  </ul>
+
+  <!-- Supply Registration Form -->
+  <div *ngIf="activeFilter === 'Registration Supply'">
+    <h4 class="mb-3 text-primary">Supply Registration Form</h4>
+    <form [formGroup]="supplyForm" (ngSubmit)="submitSupply()">
+ 
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label>Item Name</label>
+          <input type="text" class="form-control" formControlName="itemName">
+          <div *ngIf="supplyForm.get('itemName')?.touched && supplyForm.get('itemName')?.invalid" class="text-danger">
+            Item Name is required.
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label>Category</label>
+          <input type="text" class="form-control" formControlName="category">
+          <div *ngIf="supplyForm.get('category')?.touched && supplyForm.get('category')?.invalid" class="text-danger">
+            Category is required.
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label>Quantity</label>
+          <input type="number" class="form-control" formControlName="quantity">
+          <div *ngIf="supplyForm.get('quantity')?.touched && supplyForm.get('quantity')?.invalid" class="text-danger">
+            Quantity is required and cannot be negative.
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label>Unit</label>
+          <input type="text" class="form-control" formControlName="unit">
+          <div *ngIf="supplyForm.get('unit')?.touched && supplyForm.get('unit')?.invalid" class="text-danger">
+            Unit is required.
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label>Reorder Level</label>
+          <input type="number" class="form-control" formControlName="reorderLevel">
+          <div *ngIf="supplyForm.get('reorderLevel')?.touched && supplyForm.get('reorderLevel')?.invalid" class="text-danger">
+            Reorder Level is required and must be at least 1.
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success">Register Supply</button>
+    </form>
+  </div>
+
+  <!-- Stock Out Form -->
+  <div *ngIf="activeFilter === 'StockOut Form'">
+    <h4 class="mb-3 text-primary">Stock Out Form</h4>
+    <form [formGroup]="stockOutForm" (ngSubmit)="submitStockOut()">
+           <div class="col-md-6">
+  <label>Select Supply Item</label>
+  <select class="form-control" formControlName="id">
+    <option *ngFor="let item of supplies" [value]="item.id">{{ item.itemName }} (Available: {{ item.quantity }})</option>
+  </select>
+  <div *ngIf="stockOutForm.get('id')?.touched && stockOutForm.get('id')?.invalid" class="text-danger">
+    Please select an item.
+  </div>
+</div>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label>Item Name</label>
+          <input type="text" class="form-control" formControlName="itemName">
+        </div>
+        <div class="col-md-6">
+          <label>Category</label>
+          <input type="text" class="form-control" formControlName="category">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label>Quantity</label>
+          <input type="number" class="form-control" formControlName="quantity">
+          <div *ngIf="stockOutForm.get('quantity')?.touched && stockOutForm.get('quantity')?.invalid" class="text-danger">
+            Quantity is required and must be at least 1.
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label>Unit</label>
+          <input type="text" class="form-control" formControlName="unit">
+        </div>
+        <div class="col-md-4">
+          <label>Reason for Stock Out</label>
+          <input type="text" class="form-control" formControlName="reason">
+          <div *ngIf="stockOutForm.get('reason')?.touched && stockOutForm.get('reason')?.invalid" class="text-danger">
+            Reason is required.
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-danger">Stock Out</button>
+    </form>
+  </div>
+
+</div>

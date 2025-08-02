@@ -47,7 +47,7 @@
           </div>
         </div>
       </div>
-
+ <div class="row">
       <!-- Appointments Table -->
        <div class="col-md-6">
       <div class="card">
@@ -65,7 +65,8 @@
               </tr>
             </thead>
                <tbody>
-        <tr *ngFor="let appoint of Appoints | slice:0:5; let i = index">
+                <ng-container *ngFor="let appoint of todayAppointments ; let i = index">
+        <tr >
           <td>{{ i + 1 }}</td>
           <td>{{ appoint.patientName }}</td>
           <td>{{ appoint.treatmentType }}</td>
@@ -82,8 +83,9 @@
           </span>
           </td>
         </tr>
+        </ng-container>
         <tr *ngIf="Appoints.length === 0">
-          <td colspan="5" class="text-center text-muted">No Appointments Found</td>
+          <td colspan="5" class="text-center text-muted">No Appointments Found for Today</td>
         </tr>
       </tbody>
           </table>
@@ -92,7 +94,7 @@
       </div>
 
     </div>
-             <div class="col-md-4 mt-3">
+             <div class="col-md-4 mt-3 mx-2">
        <div class="card text-white bg-info">
             <div class="card-body">
               <h5 class="card-title">Total Online Payments</h5>
@@ -108,10 +110,12 @@
             </div>
           </div>
       </div>
-                     <div class="col-md-4 mt-3">
+
+  </div>
+      <div class="col-md-4 mt-3">
        <div class="card text-white bg-warning">
             <div class="card-body">
-              <h5 class="card-title">Inventory Record Minimum</h5>
+              <h5 class="card-title">Total Low Item's  In Inventory Records</h5>
               <p class="card-text fs-3">{{LowQuantity}}</p>
             </div>
           </div>
@@ -125,11 +129,14 @@
         <th>Quantity</th>
         <th>Unit</th>
         <th>Reorder Level</th>
-        <th>Actions</th>
+     
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let supply of Supplies; let i = index" [ngClass]="{'table-danger': supply.quantity <= supply.reorderLevel}">
+      <ng-container *ngFor="let supply of Supplies;   let i = index" > 
+       <tr *ngIf="supply.quantity <= 5" 
+        [ngClass]="{'table-danger': supply.quantity <= 5}">
+        
         <td>{{ i + 1 }}</td>
         <td>{{ supply.itemName }}</td>
         <td>{{ supply.category }}</td>
@@ -138,6 +145,7 @@
         <td>{{ supply.reorderLevel }}</td>
 
       </tr>
+      </ng-container>
       <tr *ngIf="Supplies.length === 0">
         <td colspan="7" class="text-center text-muted">No Supplies Found</td>
       </tr>

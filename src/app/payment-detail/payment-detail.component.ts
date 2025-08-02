@@ -15,6 +15,8 @@ formPayment! : FormGroup;
 payments : payment [] = [];
 searchText : string= "";
 searchDate : string="";
+payment! : payment;
+// originalPaymentStatus! :payment;
 
 searchDateFirst : string="";
 searchDateEnd : string="";
@@ -34,11 +36,16 @@ totalSummery: number=0;
   paymentId: ['',Validators.required],
     datePayment: ['',Validators.required],
       datePaymentFirst: ['',Validators.required],
-        datePaymentEnd: ['',Validators.required]
+        datePaymentEnd: ['',Validators.required],
+        paymentStatus: ['']
 
 
      });
    this.getPayments();
+
+//      this.payment = { paymentStatus: 'Paid' };
+//  this.formPayment.patchValue({ paymentStatus: payment.paymentStatus });
+
    
   } 
 
@@ -85,18 +92,42 @@ clearInput(){
 this.formPayment.reset();
 }
 
- getPayments()
- {
-        this.paymentser.getPayment().subscribe({
-      next: (data)=> {
-         if(data.length > 0){
-
-          this.payments=data;
-      } 
+getPayments() {
+  this.paymentser.getPayment().subscribe({
+    next: (data) => {
+      if (data.length > 0) {
+        // Add originalPaymentStatus to track initial status
+        this.payments = data.map(p => ({
+          ...p,
+          originalPaymentStatus: p.paymentStatus
+        }));
+      }
     },
-      error : ()=>{  alert("failed to load data");}
-      
-    })
+    error: () => { alert("failed to load data"); }
+  });
+}
+
+ updatePaymentStatus(payment : payment)
+ {
+  const updatePayment= {
+  ...payment, paymentStatus:payment.paymentStatus
+  };
+   this.paymentser.updatePaymentStatus(updatePayment).subscribe({
+    next:(data)=> {
+      // this.payment = data;
+       alert('Payment status updated successfully');
+    }
+    
+    ,
+    error:err => {
+      console.log("error update payment status"+ err);
+      console.error(err);
+    }
+
+
+   })
+
+   
  }
 
  getPage(){

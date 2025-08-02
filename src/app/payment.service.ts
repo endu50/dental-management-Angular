@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface payment {
+  id? : number;
   amount: number;
   method: string;
   datePayment: Date;
   patientId: string;
   paymentDescription: string;
   paymentStatus: string;
+ originalPaymentStatus?: string; 
 }
 
 @Injectable({
@@ -39,5 +41,10 @@ createPayment(payments: payment):Observable<any>{
 
   generateReceipt(data: payment): Observable<payment> {
     return this.http.post<payment>(`${this.baseUrl}/generate`, data);
+  }
+
+  updatePaymentStatus(payment : payment):Observable<payment>{
+    return this.http.put<payment>(`${this.baseUrl}/${payment.id}`, payment);
+    
   }
 }

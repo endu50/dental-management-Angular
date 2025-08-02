@@ -1,0 +1,13 @@
+.nav-tabs .nav-link.active {
+  background-color: #007bff;
+  color: white;
+  border-radius: 0.25rem;
+}
+
+.nav-tabs .nav-link {
+  cursor: pointer;
+}
+
+form label {
+  font-weight: 500;
+}

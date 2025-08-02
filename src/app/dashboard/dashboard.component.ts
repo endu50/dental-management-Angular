@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit {
   onlinePayments : number =0;
   cashPayments : number =0;
   LowQuantity : number = 0;
+   todayStr! : any; 
 
   constructor(private appoints: AppointService, private patients :PatientService, 
     private payments : PaymentService, private supply: SupplyService) {}
@@ -40,8 +41,21 @@ export class DashboardComponent implements OnInit {
     this.getInventory();
 
   }
+  get todayAppointments(): Appoint[] {
+  return this.Appoints
+    .filter(appoint => {
+      const appointDate = new Date(appoint.appointmentDate);
+      const appointDateStr = appointDate.toISOString().slice(0, 10);
+      console.log("Db:"+ appointDateStr);
+      console.log("Front:"+this.todayStr);
+     
+      return appointDateStr <= this.todayStr;
+    })
+    .slice(0, 5);
+}
    appointmentNumber() :void{
-        const todayStr = new Date().toISOString().slice(0, 10); // Format: 'YYYY-MM-DD'
+        this. todayStr = new Date().toISOString().slice(0, 10); // Format: 'YYYY-MM-DD'
+       // console.log(this.todayStr);
         var numb: number=0;
 
     this.appoints.getAllAppointments().subscribe({
@@ -52,7 +66,7 @@ export class DashboardComponent implements OnInit {
           // Count appointments that match today's date
           this.todayAppointmentsCount = this.Appoints.filter(appoint => {
             const appointDateStr = new Date(appoint.appointmentDate).toISOString().slice(0, 10);
-            return appointDateStr === todayStr;
+            return appointDateStr === this. todayStr;
           }).length;
 
           console.log("Number of appointments today:", this.todayAppointmentsCount);
@@ -97,7 +111,7 @@ getPatients(): void {
         if(data.length > 0) {
          this.Payments = data;
           this.pendingPayments= this.Payments.filter(payment => {
-            const pendingPay= payment.paymentStatus === 'Pending'
+            const pendingPay= payment.paymentStatus === 'pending'
             return pendingPay;
           }).length
            console.log("Total Payment Pending:", this.pendingPayments);
@@ -148,6 +162,7 @@ getPatients(): void {
       }
     })
   }
+ 
  getInventory()
   {
     this.supply.getAllSupplies().subscribe({
@@ -155,7 +170,8 @@ getPatients(): void {
         if(data.length > 0) {
          this.Supplies = data;
           this.LowQuantity= this.Supplies.filter(supply => {
-            const pendingPay= supply.quantity <= 5
+            var pendingPay= supply.quantity <= 5
+            
             return pendingPay;
           }).length
            console.log("Total Low Quantity Item are:", this.LowQuantity);

@@ -33,33 +33,36 @@
                       <li class="nav-item">
               <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/inventory-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inventory Detail</a>
             </li>
+                      <li class="nav-item">
+              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/stock-request" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Stock Request</a>
+            </li>
                <li class="nav-item">
               <a   *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
             </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li>
+
         </ul>
         <ul class="navbar-nav fs-3">
-        <li class="nav-item">
+  
+      </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+          <ul >
+                    <li class="nav-item dropdown list-unstyled">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Account
+            </a>
+            <ul class="dropdown-menu">
+                    <li class="nav-item">
             <a *ngIf="!auth.isLoggedIn()" class="nav-link" routerLink="/login" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">Login</a>
           </li>
           <li class="nav-item">
           <a *ngIf="!auth.isLoggedIn()" class="nav-link" routerLink="/registeraccount" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">RegisterAccount</a>
           <a  *ngIf="auth.isLoggedIn()" class="nav-link" href="#" (click)="logout()">Logout</a>
         </li>
-      </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-          <button class="btn btn-outline-success" type="submit">Search</button>
+        
+            </ul>
+          </li>
+        </ul>
         </form>
 
       </div>
