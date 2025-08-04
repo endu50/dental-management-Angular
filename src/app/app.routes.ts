@@ -17,17 +17,21 @@ import { RecieptComponent } from './reciept/reciept.component';
 import { PaymentDetailComponent } from './payment-detail/payment-detail.component';
 import { InventoryManagementComponent } from './inventory-management/inventory-management.component';
 import {SupplyRegistrationComponent} from './supply-registration/supply-registration.component'
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { AuthGuard } from './guards/auth.guard';
+
 
 export const routes: Routes = [
     { path: '', component: LoginComponent }, // Home route
     { path: 'home', component: HomeComponent },
-    { path: 'dashboard', component: DashboardComponent },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { roles: ['Admin'] } },
     { path: 'register', component: PatientRegisterComponent },
     { path: 'appointment', component: AppointmentComponent },
     { path: 'appointmentaction', component: AppointcrudComponent },
     { path: 'patientaction', component: PatientcrudComponent },
+      { path: 'unauthorized', component: UnauthorizedComponent },
     { path: 'adminaccount', component: AdminaccountComponent },
-        { path: 'payment', component: PaymentsComponent },
+        { path: 'payment', component: PaymentsComponent, canActivate: [AuthGuard], data: { roles: ['User'] } },
         { path: 'payment-detail', component: PaymentDetailComponent },
          { path: 'inventory-management', component: InventoryManagementComponent },
           { path: 'stock-request', component: SupplyRegistrationComponent },

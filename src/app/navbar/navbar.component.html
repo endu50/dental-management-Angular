@@ -6,39 +6,40 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 fs-3">
             <li class="nav-item">
-                <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+                <a *ngIf="isAuthenticated" class="nav-link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
 
               </li>
               <li class="nav-item">
-                <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/register" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Register</a>
+                <a *ngIf="" class="nav-link" routerLink="/register" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Register</a>
               </li>
               <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/appointment" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Appointments</a>
+              <a *ngIf="" class="nav-link" routerLink="/appointment" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Appointments</a>
             </li>
             <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/appointmentaction" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">AppointmentAction</a>
+              <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/appointmentaction" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">AppointmentAction</a>
             </li>
             <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/patientaction" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">PatientAction</a>
+              <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/patientaction" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">PatientAction</a>
             </li>
             <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/adminaccount" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">AdminAccount</a>
+              <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/adminaccount" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">AdminAccount</a>
             </li>
               <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/payment" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Payments</a>
+              <a *ngIf="role === 'User'" class="nav-link" routerLink="/payment" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Payments</a>
             </li>
                    <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/payment-detail" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Payment Detail</a>
+              <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/payment-detail" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Payment Detail</a>
             </li>
                       <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/inventory-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inventory Detail</a>
+              <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/inventory-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inventory Detail</a>
             </li>
                       <li class="nav-item">
-              <a *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/stock-request" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Stock Request</a>
+              <a *ngIf="role === 'User'" class="nav-link" routerLink="/stock-request" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Stock Request</a>
             </li>
                <li class="nav-item">
-              <a   *ngIf="auth.isLoggedIn()" class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
+              <a   *ngIf="role === 'Admin'" class="nav-link" routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Dashboard</a>
             </li>
+                
 
         </ul>
         <ul class="navbar-nav fs-3">
@@ -53,11 +54,11 @@
             </a>
             <ul class="dropdown-menu">
                     <li class="nav-item">
-            <a *ngIf="!auth.isLoggedIn()" class="nav-link" routerLink="/login" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">Login</a>
+            <a *ngIf="!isAuthenticated()" class="nav-link" routerLink="/login" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">Login</a>
           </li>
           <li class="nav-item">
-          <a *ngIf="!auth.isLoggedIn()" class="nav-link" routerLink="/registeraccount" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">RegisterAccount</a>
-          <a  *ngIf="auth.isLoggedIn()" class="nav-link" href="#" (click)="logout()">Logout</a>
+          <a *ngIf="!isAuthenticated()" class="nav-link" routerLink="/registeraccount" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">RegisterAccount</a>
+          <a *ngIf="isAuthenticated()" class="nav-link" href="#" (click)="logout()">Logout</a>
         </li>
         
             </ul>

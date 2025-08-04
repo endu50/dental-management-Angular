@@ -5,6 +5,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../auth-service.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +18,7 @@ export class LoginComponent {
   form: FormGroup;
    forgetpassowrd = false; 
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authService:AuthService) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -34,7 +36,19 @@ export class LoginComponent {
           localStorage.setItem('token', res.token); // Store JWT
           if (localStorage.getItem('token')===res.token) {
           console.log("Successfllly Login!!!");
-          localStorage.setItem('token', res.token);
+        // After successful login response
+           localStorage.setItem('userRole', res.role);  // response.role should come from backend
+       const token = res.token;
+  const role = res.role;  // <-- Get role here if provided in response
+
+  // If Role is in token, decode it:
+  // const decodedToken = this.authService.decodeToken(token);
+  // const role = decodedToken['role']; // Adjust based on token structure
+
+  this.authService.setRole(role);  // <-- Save role in a service
+  console.log("Login Successful, Role:", role);
+
+
           const tokenPayload = JSON.parse(atob(res.token.split('.')[1]));
           const expiryTime = tokenPayload.exp * 1000; // Convert to milliseconds
 

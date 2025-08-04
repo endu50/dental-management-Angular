@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../auth-service.service';
@@ -9,14 +9,30 @@ import { AuthService } from '../auth-service.service';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   /**
    *
    */
-  constructor( public auth:AuthService) {
+  role: string | null = null;
+  constructor( public authService:AuthService) { }
+
+  ngOnInit(): void {
+  this.authService.getRole().subscribe(role => {
+    console.log("Role Updated:", role);
+    this.role = role;  // <-- Assign to component variable
+  });
+
+     
+   //  console.log("role"+ this.role);
   }
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
    logout()
    {
-    this.auth.logout();
+    this.authService.logout();
+    window.location.reload();
    }
 }
