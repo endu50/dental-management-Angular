@@ -9,12 +9,12 @@
     <!-- Sidebar -->
     <div class="col-md-2 bg-light vh-100 border-end">
       <div class="list-group list-group-flush">
-        <a *ngIf="auth.isLoggedIn()" href="#" class="list-group-item list-group-item-action active "> <h2> Dashboard </h2></a>
-        <a *ngIf="auth.isLoggedIn()" href="#" class="list-group-item list-group-item-action">Appointments</a>
-        <a *ngIf="auth.isLoggedIn()" href="#" class="list-group-item list-group-item-action">Patients</a>
-        <a *ngIf="auth.isLoggedIn()" href="#" class="list-group-item list-group-item-action">Dentists</a>
-        <a *ngIf="auth.isLoggedIn()" href="#" class="list-group-item list-group-item-action">Billing</a>
-        <a *ngIf="auth.isLoggedIn()" href="#" class="list-group-item list-group-item-action">Reports</a>
+        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action active "> <h2> Dashboard </h2></a>
+        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Appointments</a>
+        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Patients</a>
+        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Dentists</a>
+        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Billing</a>
+        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Reports</a>
       </div>
     </div>
      <div class="col-md-10 p-4">

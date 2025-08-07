@@ -30,7 +30,8 @@ export class AdminaccountComponent implements OnInit {
       
       fullName: [],
       email: [],
-      password: []
+      password: [],
+      role:[]
 
  
     });
@@ -41,8 +42,9 @@ export class AdminaccountComponent implements OnInit {
   getFilteredAccount() :Account[]{
  return this.account.filter(a=>
   a.fullName?.toLowerCase().includes(this.serarchText.toLowerCase()) ||
-  a.email?.toLowerCase().includes(this.serarchText.toLowerCase())
- )
+  a.email?.toLowerCase().includes(this.serarchText.toLowerCase()) ||
+  a.role?.toLowerCase().includes(this.serarchText.toLowerCase()) 
+ ) 
   }
   loadContent(){
     this.auth.getAccount().subscribe({

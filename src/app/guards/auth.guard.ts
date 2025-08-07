@@ -22,6 +22,7 @@ export class AuthGuard implements CanActivate {
       take(1),  // Complete after first emission
       map(role => {
         if (role && expectedRoles.includes(role)) {
+          console.log("Auth-gurd Role:"+ role)
           return true;
         } else {
           return this.router.createUrlTree(['/unauthorized']);

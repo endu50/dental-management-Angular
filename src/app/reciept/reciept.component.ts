@@ -35,7 +35,7 @@ receiptForm: FormGroup;
 ;
   }
 ngOnInit(): void {
-  this.receiptForm.patchValue({ issuedDate: new Date().toISOString().substring(0, 16) });
+  this.receiptForm.patchValue({ issuedDate: new Date().toLocaleDateString('en-CA') });
 
   this.receiptForm.get('startDate')?.valueChanges.subscribe(() => this.filterDate());
   this.receiptForm.get('endDate')?.valueChanges.subscribe(() => this.filterDate());
@@ -162,8 +162,8 @@ onPaymentSelect(event: Event) {
   const selectedDate = (event.target as HTMLSelectElement).value;
 
   const found = this.payments.find(p =>
-    new Date(p.datePayment).toISOString().slice(0, 10) ===
-    new Date(selectedDate).toISOString().slice(0, 10)
+    new Date(p.datePayment).toLocaleDateString('en-CA') ===
+    new Date(selectedDate).toLocaleDateString('en-CA')
   );
 
   if (found) {
@@ -185,7 +185,7 @@ onClear()
     this.payments = [];
   this.filteredPayments = [];
    this.receiptForm.patchValue({
-    issuedDate: new Date().toISOString().substring(0, 16)});
+    issuedDate: new Date().toLocaleDateString('en-CA')});
       //totalPayments: 0
   
 }

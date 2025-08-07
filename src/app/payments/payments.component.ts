@@ -35,7 +35,7 @@ patient: Patient | null = null;
   }
   ngOnInit(): void {
   
- this.form.patchValue({ datePayment: new Date().toISOString().substring(0, 16) });
+ this.form.patchValue({ datePayment: new Date().toLocaleDateString('en-CA') });
   }
 
   get PatientId() {
@@ -47,7 +47,7 @@ patient: Patient | null = null;
   {
     this.form.reset();
       this.patient = null;
-       this.form.patchValue({ datePayment: new Date().toISOString().substring(0, 16) });
+       this.form.patchValue({ datePayment: new Date().toLocaleDateString('en-CA') });
   }
 printReciept(){
  

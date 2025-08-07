@@ -33,6 +33,9 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this. todayStr = new Date().toLocaleDateString('en-CA')// Format: 'YYYY-MM-DD'
+    console.log("todayis:"+this.todayStr)
+
     this.appointmentNumber();
     this.getPatients();
     this.getPendingBills();
@@ -45,16 +48,16 @@ export class DashboardComponent implements OnInit {
   return this.Appoints
     .filter(appoint => {
       const appointDate = new Date(appoint.appointmentDate);
-      const appointDateStr = appointDate.toISOString().slice(0, 10);
-      console.log("Db:"+ appointDateStr);
-      console.log("Front:"+this.todayStr);
+      const appointDateStr = appointDate.toLocaleDateString('en-CA');
+      // console.log("Db:"+ appointDateStr);
+      // console.log("Front:"+this.todayStr);
      
-      return appointDateStr <= this.todayStr;
+      return appointDateStr === this.todayStr;
     })
     .slice(0, 5);
 }
    appointmentNumber() :void{
-        this. todayStr = new Date().toISOString().slice(0, 10); // Format: 'YYYY-MM-DD'
+        
        // console.log(this.todayStr);
         var numb: number=0;
 
@@ -65,7 +68,7 @@ export class DashboardComponent implements OnInit {
 
           // Count appointments that match today's date
           this.todayAppointmentsCount = this.Appoints.filter(appoint => {
-            const appointDateStr = new Date(appoint.appointmentDate).toISOString().slice(0, 10);
+            const appointDateStr = new Date(appoint.appointmentDate).toLocaleDateString('en-CA');
             return appointDateStr === this. todayStr;
           }).length;
 

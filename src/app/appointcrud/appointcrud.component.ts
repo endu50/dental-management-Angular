@@ -90,7 +90,7 @@ export class AppointcrudComponent implements OnInit {
 
   editAppointment(appoint: Appoint) {
     const formattedDate = appoint.appointmentDate
-      ? new Date(appoint.appointmentDate).toISOString().split('T')[0]
+      ? new Date(appoint.appointmentDate).toLocaleDateString('en-CA')
       : '';
   
     this.appointForm.patchValue({

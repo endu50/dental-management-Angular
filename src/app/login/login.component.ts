@@ -37,7 +37,7 @@ export class LoginComponent {
           if (localStorage.getItem('token')===res.token) {
           console.log("Successfllly Login!!!");
         // After successful login response
-           localStorage.setItem('userRole', res.role);  // response.role should come from backend
+         //  localStorage.setItem('userRole', res.role);  // response.role should come from backend
        const token = res.token;
   const role = res.role;  // <-- Get role here if provided in response
 
@@ -45,16 +45,30 @@ export class LoginComponent {
   // const decodedToken = this.authService.decodeToken(token);
   // const role = decodedToken['role']; // Adjust based on token structure
 
-  this.authService.setRole(role);  // <-- Save role in a service
+  
   console.log("Login Successful, Role:", role);
 
 
           const tokenPayload = JSON.parse(atob(res.token.split('.')[1]));
-          const expiryTime = tokenPayload.exp * 1000; // Convert to milliseconds
+         // const expiryTime = tokenPayload.exp * 1000; // Convert to milliseconds
+        this.authService.updateUserRole(role);  // Pass role directly
+ // <<< Add this line to update role directly
 
-          localStorage.setItem('token_expiry', expiryTime.toString());
+
+         // localStorage.setItem('token_expiry', expiryTime.toString());
+      const decoded: any = jwtDecode(token);
+        //const expiry = decoded.exp * 1000; // convert to ms
+       this.authService.startLogoutTimer(decoded.exp); // ✅ only pass in exp (seconds)
+
+     // this.authService.startLogoutTimer(decoded.exp * 1000); // ⬅️ Add this
+          if(role === 'Admin'){
+              this.router.navigate(['/dashboard']);
+          }
+          else if(role === 'User'){
           this.router.navigate(['/home']);
+          }
           this.forgetpassowrd = false;
+          
           
           }
           else {

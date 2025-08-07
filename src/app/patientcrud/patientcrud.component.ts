@@ -50,7 +50,7 @@ onSubmit()
 }
 editPatient(patient : Patient){
   const formattedDate = patient.dateOfBirth
-  ? new Date(patient.dateOfBirth).toISOString().split('T')[0]
+  ? new Date(patient.dateOfBirth).toLocaleDateString('en-CA')
   : '';
 
 this.formpatient.patchValue({

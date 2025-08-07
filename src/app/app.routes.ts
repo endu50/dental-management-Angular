@@ -22,24 +22,24 @@ import { AuthGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
-    { path: '', component: LoginComponent }, // Home route
-    { path: 'home', component: HomeComponent },
+    { path: '', component: LoginComponent }, // Login route
+    { path: 'home', component: HomeComponent , canActivate: [AuthGuard], data: { roles: ['User'] }},
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { roles: ['Admin'] } },
-    { path: 'register', component: PatientRegisterComponent },
-    { path: 'appointment', component: AppointmentComponent },
-    { path: 'appointmentaction', component: AppointcrudComponent },
-    { path: 'patientaction', component: PatientcrudComponent },
+    { path: 'register', component: PatientRegisterComponent , canActivate: [AuthGuard], data: { roles: ['User'] }},
+    { path: 'appointment', component: AppointmentComponent , canActivate: [AuthGuard], data: { roles: ['User'] } },
+    { path: 'appointmentaction', component: AppointcrudComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] } },
+    { path: 'patientaction', component: PatientcrudComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] }},
       { path: 'unauthorized', component: UnauthorizedComponent },
-    { path: 'adminaccount', component: AdminaccountComponent },
+    { path: 'adminaccount', component: AdminaccountComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] }},
         { path: 'payment', component: PaymentsComponent, canActivate: [AuthGuard], data: { roles: ['User'] } },
-        { path: 'payment-detail', component: PaymentDetailComponent },
-         { path: 'inventory-management', component: InventoryManagementComponent },
-          { path: 'stock-request', component: SupplyRegistrationComponent },
+        { path: 'payment-detail', component: PaymentDetailComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] }},
+         { path: 'inventory-management', component: InventoryManagementComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] } },
+          { path: 'stock-request', component: SupplyRegistrationComponent , canActivate: [AuthGuard], data: { roles: ['User'] }},
     { path: 'login', component: LoginComponent },
     { path: 'resetpassword', component: ForgetpasswordComponent },
     { path: 'reset-password', component: ResetPasswordComponent },
     { path: 'send-otp', component: SendOtpComponentComponent },
     { path: 'verify-otp', component: VerifyOtpComponentComponent },
-    { path: 'registeraccount', component: RegisteraccountComponent },
+    { path: 'registeraccount', component: RegisteraccountComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] } },
     { path: 'reciept', component: RecieptComponent }
 ];
