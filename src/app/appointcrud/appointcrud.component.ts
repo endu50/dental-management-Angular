@@ -18,6 +18,7 @@ export class AppointcrudComponent implements OnInit {
   selectedAppoint?: Appoint;
   errorMessage: string = '';
   searchText: string = '';
+  searchDate: any;
   page: number = 1;
   pageSize: number = 7;
 
@@ -133,12 +134,28 @@ export class AppointcrudComponent implements OnInit {
   }
 
   get filteredAppointments() {
-    return this.appointments.filter(a =>
-      a.patientName.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      a.treatmentType.toLowerCase().includes(this.searchText.toLowerCase())
-    );
-  }
+    return this.appointments.filter(a =>{
+      const matchText=this.searchText
+    ?  a.patientName.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      a.treatmentType.toLowerCase().includes(this.searchText.toLowerCase()) 
+        : true;
 
+     // Date search filter
+    let matchDate = true;
+    if (this.searchDate) {
+      const appointDateStr = new Date(a.appointmentDate).toLocaleDateString('en-CA');
+      const searchDateStr = new Date(this.searchDate).toLocaleDateString('en-CA');
+      matchDate = appointDateStr === searchDateStr;
+    }
+   
+    return matchText && matchDate;
+  });
+  }
+onClear()
+{
+  this.searchText="";
+  this.searchDate= null;
+}
   get paginatedAppointments() {
     const start = (this.page - 1) * this.pageSize;
     return this.filteredAppointments.slice(start, start + this.pageSize);

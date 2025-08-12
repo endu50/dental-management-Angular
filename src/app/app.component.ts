@@ -26,23 +26,29 @@ export class AppComponent implements OnInit {
     
   }
   ngOnInit(): void {
-    const roleFromToken = this.auth.getDecodedUserRole();
-  this.auth.updateUserRole(roleFromToken ?? undefined);    // Restore role from token on App start
-  const token = localStorage.getItem('token');
-  if (token) {
-    const decoded: any = jwtDecode(token);
-    const now = Date.now();
-    if (decoded.exp * 1000 > now) {
-      this.auth.startLogoutTimer(decoded.exp * 1000);
-    } else {
-      this.auth.logout();
-    }
-  }
-      if (this.auth.isTokenExpired()) {
-      alert('Session expired. You will be logged out.');
-      this.auth.logout();  // clear localStorage or token
-      this.router.navigate(['/login']);  // redirect to login
-    }
+      
+// const token = localStorage.getItem('token');
+// if (token) {
+//   const decoded: any = jwtDecode(token);
+//   const now = Date.now();
+//   if (decoded.exp * 1000 > now) {
+//     this.auth.startLogoutTimer(decoded.exp); // ✅ only pass seconds
+//   } else {
+//     this.auth.logout();
+//   }
+// }
+
+  const activityEvents = ['mousemove','mousedown','keypress','touchstart','scroll'];
+  activityEvents.forEach(e => window.addEventListener(e, () => this.auth.updateLastActivity(), {passive:true}));
+
+  // optionally initialize lastActivity from storage
+  const stored = localStorage.getItem('lastActivity');
+  if (stored) this.auth.updateLastActivity(); // or parse/assign
+    //   if (this.auth.isTokenExpired()) {
+    //   alert('Session expired. You will be logged out.');
+    //   this.auth.logout();  // clear localStorage or token
+    //   this.router.navigate(['/login']);  // redirect to login
+    // }
     this.isLoggedIn=  this.auth.isLoggedIn()
     if(this.isLoggedIn)
     {

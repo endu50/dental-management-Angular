@@ -12,7 +12,8 @@ import { jwtDecode } from 'jwt-decode';
   selector: 'app-login',
   imports: [CommonModule,ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+ styleUrls: ['./login.component.css']
+
 })
 export class LoginComponent {
   form: FormGroup;
@@ -27,75 +28,68 @@ export class LoginComponent {
   get f() { return this.form.controls; }
 
   
+onSubmit() {
+  if (this.form.invalid) return;
 
-  onSubmit() {
-    if (this.form.valid) {
-      this.http.post<any>('http://localhost:5139/api/auth/login', this.form.value)
-        .subscribe({ next:(res) => {
-          if(res.token) { 
-          localStorage.setItem('token', res.token); // Store JWT
-          if (localStorage.getItem('token')===res.token) {
-          console.log("Successfllly Login!!!");
-        // After successful login response
-         //  localStorage.setItem('userRole', res.role);  // response.role should come from backend
-       const token = res.token;
-  const role = res.role;  // <-- Get role here if provided in response
+  this.http.post<any>('http://localhost:5139/api/auth/login', this.form.value).subscribe({
+    next: (res) => {
+      if (!res?.token) {
+        alert("Invalid login attempt - token missing.");
+        this.forgetpassowrd = true;
+        return;
+      }
 
-  // If Role is in token, decode it:
-  // const decodedToken = this.authService.decodeToken(token);
-  // const role = decodedToken['role']; // Adjust based on token structure
+      // decode token
+      const decoded: any = jwtDecode(res.token);
+      // try to get role from response or token claims (common claim names)
+      const roleFromResponse: string | undefined = res.role;
+      const roleFromToken: string | undefined =
+        decoded.role ||
+        decoded['role'] ||
+        decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 
-  
-  console.log("Login Successful, Role:", role);
+      const role = roleFromResponse || roleFromToken || null;
 
+      // store tokens and role (only store refreshToken if backend actually returned it)
+      localStorage.setItem('token', res.token);
+      if (res?.refreshToken) {
+        localStorage.setItem('refreshToken', res.refreshToken);
+      } else {
+        console.warn('Login response did not include refreshToken.');
+      }
+      if (role) localStorage.setItem('role', role);
 
-          const tokenPayload = JSON.parse(atob(res.token.split('.')[1]));
-         // const expiryTime = tokenPayload.exp * 1000; // Convert to milliseconds
-        this.authService.updateUserRole(role);  // Pass role directly
- // <<< Add this line to update role directly
+      console.log("Successfully Logged In, Role:", role);
+   // in your login success handler after storing tokens
+       this.authService.updateLastActivity();
 
+      // update in-memory state and timer
+      this.authService.updateUserRole(role);
+      if (decoded?.exp) {
+        this.authService.startLogoutTimer(decoded.exp); // exp is seconds since epoch
+      } else {
+        console.warn('Decoded token missing exp claim.');
+      }
 
-         // localStorage.setItem('token_expiry', expiryTime.toString());
-      const decoded: any = jwtDecode(token);
-        //const expiry = decoded.exp * 1000; // convert to ms
-       this.authService.startLogoutTimer(decoded.exp); // ✅ only pass in exp (seconds)
+      // navigate
+      if (role === 'Admin') {
+        this.router.navigate(['/dashboard']);
+      } else if (role === 'User') {
+        this.router.navigate(['/home']);
+      } else {
+        this.router.navigate(['/home']); // fallback
+      }
 
-     // this.authService.startLogoutTimer(decoded.exp * 1000); // ⬅️ Add this
-          if(role === 'Admin'){
-              this.router.navigate(['/dashboard']);
-          }
-          else if(role === 'User'){
-          this.router.navigate(['/home']);
-          }
-          this.forgetpassowrd = false;
-          
-          
-          }
-          else {
-            alert('Incorrect Email Or Password');
-             this.forgetpassowrd=true;
-                
-            this.form.addControl
-            
-          }
-        }
-        else {
-             alert("Invalid login attempt - token missing.");
-                 this.forgetpassowrd=true;
-            
-        }
-      },
-        error: (err) => {
-          // This block runs when login fails (wrong password, server error, etc.)
-          alert("connection refused Or check your email and password.");
-              this.forgetpassowrd=true;
-          console.error("Login failed:", err);
-        }
-       
-        });
+      this.forgetpassowrd = false;
+    },
+    error: (err) => {
+      alert("Connection refused or check your email and password.");
+      this.forgetpassowrd = true;
+      console.error("Login failed:", err);
     }
+  });
+}
 
-  }
 
   GoToRegisterPage()
   {

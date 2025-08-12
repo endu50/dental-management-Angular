@@ -17,10 +17,10 @@ export class NavbarComponent implements OnInit {
   constructor( public authService:AuthService) { }
 
   ngOnInit(): void {
-  this.authService.getUserRole().subscribe(role => {
-    console.log("Role Updated:", role);
-    this.role = role;
-  });
+  this.authService.currentUserRole$.subscribe(role => {
+  console.log('Role Updated:', role);
+  this.role = role;
+});
 
      
    //  console.log("role"+ this.role);
@@ -32,7 +32,7 @@ export class NavbarComponent implements OnInit {
 
    logout()
    {
-    this.authService.clearLogoutTimer();
+   // this.authService.();
     this.authService.logout(); 
     window.location.reload();
    }

@@ -46,7 +46,7 @@
    <strong> Payment Method: </strong>   {{payment.method}}
    <strong>Amount Paid: </strong>   {{payment.amount}}
    <strong> Payment Description: </strong>   {{payment.paymentDescription}}
-    <strong> Payment Date: </strong>   {{payment.datePayment}}
+    <strong> Payment Date: </strong>   {{payment.datePayment | date}}
      <!-- <strong> Payment status: </strong>   {{payment.paymentStatus}} 
      <strong> Payment status: </strong> <input [(ngModel)]="payment.paymentStatus" class="form-control w-auto" /> -->
 <!-- 
