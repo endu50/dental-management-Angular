@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../environments/environment/environment.component';
 
 
 export interface Account {
@@ -16,7 +17,7 @@ export interface Account {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private tokenKey = 'token';
-  private userRoleSubject = new BehaviorSubject<string | null>(null);
+  public userRoleSubject = new BehaviorSubject<string | null>(null);
     currentUserRole$ = this.userRoleSubject.asObservable();
   private logoutTimer: any;
  private lastActivityMs: number = Date.now();
@@ -281,45 +282,42 @@ startLogoutTimer(expInSec: number) {
 //   });
 // }
 refreshToken() {
-  const refreshToken = localStorage.getItem('refreshToken');
-  if (!refreshToken) {
-    console.warn('No refresh token found, logging out');
-    this.logout();
-    return;
-  }
+  // We do NOT read any refresh token; cookie is HttpOnly and sent automatically.
+  console.log('Refreshing token (cookie-based)…');
 
-  console.log('Starting token refresh, sending refreshToken:', refreshToken);
-
-  this.http.post<{ token: string; refreshToken: string; role?: string }>(
-    'http://localhost:5139/api/auth/refresh',
-    { refreshToken } // must match server DTO
+  this.http.post<{ token: string; role?: string }>(
+    `${environment.apiUrl}/auth/refresh`,
+    null,                    // empty body
+    { withCredentials: true }
   ).subscribe({
-    next: res => {
-      console.log('Token refreshed successfully', res);
+    next: (res) => {
+      console.log('Token refreshed', res);
+      if (!res?.token) { throw new Error('No token in refresh response'); }
 
-      // Save tokens & role
+      // store new access token only
       localStorage.setItem('token', res.token);
-      localStorage.setItem('refreshToken', res.refreshToken);
       if (res.role) localStorage.setItem('role', res.role);
 
-      // Update BehaviorSubject so navbar updates immediately
-      const decoded: any = jwtDecode(res.token);
-      const role = res.role || decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
-      this.userRoleSubject.next(role);
-
-      // Restart logout/refresh timer using token exp (seconds)
-      this.startLogoutTimer(decoded.exp);
+      // update role & timers
+      try {
+        const decoded: any = jwtDecode(res.token);
+        const role = res.role || decoded?.role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+        this.userRoleSubject.next(role);
+        if (decoded?.exp) this.startLogoutTimer(decoded.exp);
+      } catch (e) {
+        console.error('Failed to decode refreshed token', e);
+        this.logout();
+      }
     },
-    error: err => {
-      console.error('Refresh token failed', err);
-      // For debugging, show returned message if present
-      if (err?.error?.message) console.error('Server message:', err.error.message);
+    error: (err) => {
+      console.error('Refresh failed', err);
+      const serverMsg = err?.error?.message;
+      if (serverMsg) console.error('Server:', serverMsg);
       alert('Session expired. You will be logged out.');
       this.logout();
     }
   });
 }
-
 
 
 logout() {
