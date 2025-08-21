@@ -1,3 +1,4 @@
+// login.component.ts
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,6 +11,7 @@ import { environment } from '../../environments/environment/environment.componen
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
@@ -32,47 +34,67 @@ export class LoginComponent {
 
   get f() { return this.form.controls; }
 
-onSubmit() {
-  if (this.form.invalid) return;
-  const payload = { email: this.form.value.email, password: this.form.value.password };
+  onSubmit() {
+    if (this.form.invalid) return;
+    const payload = { email: this.form.value.email, password: this.form.value.password };
 
-  this.http.post<{ token: string; role?: string }>(
-    `${environment.apiUrl}/auth/login`,
-    payload,
-    { withCredentials: true } // send/receive the cookie
-  ).subscribe({
-    next: (res) => {
-      if (!res?.token) { alert('Login failed: token missing'); return; }
+    this.http.post<{ token: string; role?: string; email?: string  }>(
+      `${environment.apiUrl}/auth/login`,
+      payload,
+      { withCredentials: true } // send/receive the cookie
+    ).subscribe({
+      next: (res) => {
+        if (!res?.token) { alert('Login failed: token missing'); return; }
 
-      localStorage.setItem('token', res.token);
-      if (res.role) localStorage.setItem('role', res.role);
+        // persist access token & role
+        localStorage.setItem('token', res.token);
+        if (res.role) localStorage.setItem('role', res.role);
+           if (res.email) localStorage.setItem('email', res.email);
 
-      try {
-        const decoded: any = jwtDecode(res.token);
-        const role = res.role || decoded?.role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
-        this.authService.userRoleSubject.next(role);
-        if (decoded?.exp) this.authService.startLogoutTimer(decoded.exp);
-         // Redirect based on role
-  if (role === 'User') {
-    this.router.navigate(['/home']);
-  } else if(role === 'Admin') {
-    this.router.navigate(['/dashboard']);
-  }
-      } 
-      catch (e) {
-        console.error('Bad token.', e);
-        this.authService.logout();
+        // update role through service (avoid touching subjects directly)
+        let roleToSet: string | null = null;
+        if (res.role) {
+          roleToSet = res.role;
+        } else {
+          try {
+            const decoded: any = jwtDecode(res.token);
+            roleToSet = decoded?.role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+          } catch (e) {
+            console.error('Failed to decode token after login', e);
+          }
+        }
+
+        this.authService.updateUserRole(roleToSet);
+        this.authService.updateLoginState(true);
+
+        // start timers based on token
+        try {
+          const decoded: any = jwtDecode(res.token);
+          if (decoded?.exp) this.authService.startLogoutTimer(decoded.exp);
+        } catch (e) {
+          console.error('Bad token.', e);
+          this.authService.logout();
+        }
+        this.authService.setAuthState(res.token, res.role, res.email);
+
+        // navigate based on role
+        if (roleToSet === 'User') {
+          this.router.navigate(['/home']);
+        } else if (roleToSet === 'Admin') {
+          this.router.navigate(['/dashboard']);
+        } else {
+          // default
+          this.router.navigate(['/login']);
+        }
+      },
+      error: (err) => {
+        console.error('Login failed', err);
+       
+        alert('Invalid credentials');
+         this.forgetpassowrd=true;
       }
-
-      
-    },
-    error: (err) => {
-      console.error('Login failed', err);
-      alert('Invalid credentials');
-    }
-  });
-}
-
+    });
+  }
 
   GoToRegisterPage() {
     this.router.navigate(['/registeraccount']);

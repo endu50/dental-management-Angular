@@ -7,6 +7,7 @@ import { HomeComponent } from './home/home.component';
 import { AppointcrudComponent } from './appointcrud/appointcrud.component';
 import { PatientcrudComponent } from './patientcrud/patientcrud.component';
 import { AdminaccountComponent } from './adminaccount/adminaccount.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ForgetpasswordComponent } from './forgetpassword/forgetpassword.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { SendOtpComponentComponent } from './send-otp-component/send-otp-component.component';
@@ -31,6 +32,7 @@ export const routes: Routes = [
     { path: 'patientaction', component: PatientcrudComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] }},
       { path: 'unauthorized', component: UnauthorizedComponent },
     { path: 'adminaccount', component: AdminaccountComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] }},
+       { path: 'change-password', component: ChangePasswordComponent },
         { path: 'payment', component: PaymentsComponent, canActivate: [AuthGuard], data: { roles: ['User'] } },
         { path: 'payment-detail', component: PaymentDetailComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] }},
          { path: 'inventory-management', component: InventoryManagementComponent , canActivate: [AuthGuard], data: { roles: ['Admin'] } },

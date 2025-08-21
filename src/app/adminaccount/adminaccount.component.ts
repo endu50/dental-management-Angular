@@ -59,6 +59,7 @@ export class AdminaccountComponent implements OnInit {
   }
   deleteAccount(id : number) {
    
+    if(confirm('Are You Sure to Delete The Account?'))
    this.auth.deleteAccount(id).subscribe({
     next: (data) => {
       alert("the Account is deleted successfully!")

@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
   this.authService.currentUserRole$.subscribe(role => {
-  console.log('Role Updated:', role);
+  //console.log('Role Updated:', role);
   this.role = role;
 });
 
@@ -34,6 +34,6 @@ export class NavbarComponent implements OnInit {
    {
    // this.authService.();
     this.authService.logout(); 
-    window.location.reload();
+    //window.location.reload();
    }
 }

@@ -8,13 +8,20 @@
     <div class="row g-0">
     <!-- Sidebar -->
     <div class="col-md-2 bg-light vh-100 border-end">
-      <div class="list-group list-group-flush">
-        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action active "> <h2> Dashboard </h2></a>
-        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Appointments</a>
-        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Patients</a>
-        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Dentists</a>
-        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Billing</a>
-        <a *ngIf="isLoggedIn" href="#" class="list-group-item list-group-item-action">Reports</a>
+      <div *ngIf="Role === 'Admin' " class="list-group list-group-flush">
+        <a *ngIf="isLoggedIn" routerLink="/dashboard"  routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"    class="list-group-item list-group-item-action active "> <h2> Dashboard </h2></a>
+        <a *ngIf="isLoggedIn"  routerLink="/appointmentaction"  routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"  class="list-group-item list-group-item-action">Appointments</a>
+        <a *ngIf="isLoggedIn" routerLink="/patientaction"  routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"  class="list-group-item list-group-item-action">Patients</a>
+        <a *ngIf="isLoggedIn" routerLink="/registeraccount" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="list-group-item list-group-item-action">Dentists</a>
+        <a *ngIf="isLoggedIn" routerLink="/payment-detail" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="list-group-item list-group-item-action">Billing</a>
+        <a *ngIf="isLoggedIn" routerLink="/inventory-management" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="list-group-item list-group-item-action">Reports</a>
+      </div>
+            <div *ngIf="Role === 'User' " class="list-group list-group-flush">
+        <a *ngIf="isLoggedIn" routerLink="/home"  routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"    class="list-group-item list-group-item-action active "> <h2> Home </h2></a>
+        <a *ngIf="isLoggedIn"  routerLink="/appointment"  routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"  class="list-group-item list-group-item-action">Appointments</a>
+        <a *ngIf="isLoggedIn" routerLink="/register"  routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"  class="list-group-item list-group-item-action">Patients</a>
+        <a *ngIf="isLoggedIn" routerLink="/payment" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="list-group-item list-group-item-action">Billing</a>
+        <a *ngIf="isLoggedIn" routerLink="/stock-request" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="list-group-item list-group-item-action">Stok Request</a>
       </div>
     </div>
      <div class="col-md-10 p-4">

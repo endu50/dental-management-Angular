@@ -4,333 +4,448 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../environments/environment/environment.component';
-
+import { environment } from '../environments/environment/environment.component'; // keep your existing pat
+import { HttpHeaders } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 export interface Account {
-  id:number;
-  fullName: string,
-  email  : string,
-  role: string
+  id: number;
+  fullName: string;
+  email: string;
+  role: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private tokenKey = 'token';
-  public userRoleSubject = new BehaviorSubject<string | null>(null);
-    currentUserRole$ = this.userRoleSubject.asObservable();
-  private logoutTimer: any;
- private lastActivityMs: number = Date.now();
- //public userRoleSubject = new BehaviorSubject<string | null>(this.getDecodedUserRole());
- //private userRole = new BehaviorSubject<string | null>(null);
+  private tokenKey = 'token';
 
-   private baseUrl = 'http://localhost:5139/api/auth/get';
-     private baseUrl2 = 'http://localhost:5139/api/auth';
-     private baseUrlReg= 'http://localhost:5139/api/auth/register';
-         private baseUrlReset= 'http://localhost:5139/api/auth/request-reset';
+  // Subjects (private to prevent accidental external .next())
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
+  public isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-         private baseUrlRefresh = 'http://localhost:5139/api/auth/';
-  constructor(private router: Router, private http: HttpClient ) {
-     this.loadUserFromStorage();
-  // const roleFromToken = this.getDecodedUserRole();
-  // console.log('Role Restored from Token on Service Init:', roleFromToken);
-  // this.userRoleSubject.next(roleFromToken);
+  private userRoleSubject = new BehaviorSubject<string | null>(null);
+  public currentUserRole$ = this.userRoleSubject.asObservable();
+
+ private userEmail = new BehaviorSubject<string | null>(localStorage.getItem('email'));
+  public currentUserEmail$ = this.userEmail.asObservable();
+
+
+  private logoutTimer: any = null;
+  private lastActivityMs: number = Date.now();
+
+  private baseUrl = 'http://localhost:5139/api/auth/get';
+  private baseUrl2 = 'http://localhost:5139/api/auth';
+  private baseUrlReg = 'http://localhost:5139/api/auth/register';
+  private baseUrlReset = 'http://localhost:5139/api/auth/request-reset';
+  private baseUrlRefresh = 'http://localhost:5139/api/auth/';
+
+  constructor(private router: Router, private http: HttpClient) {
+    this.loadUserFromStorage();
+    // Debug: log email/role changes and localStorage
+this.currentUserEmail$.subscribe(email => {
+  console.debug('[DEBUG][AuthService] currentUserEmail$ ->', email);
+  console.debug('[DEBUG][AuthService] localStorage.email ->', localStorage.getItem('email'));
+});
+// Also log role changes (optional)
+this.currentUserRole$.subscribe(role => {
+  console.debug('[DEBUG][AuthService] currentUserRole$ ->', role);
+});
+
   }
-
-
-getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
-  }
-  private loadUserFromStorage() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decoded: any = jwtDecode(token);
-      const role = decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-      this.userRoleSubject.next(role);
-      this.startLogoutTimer(decoded.exp);
-    }
-  }
-   updateUserRole(role: string | null) {
-    this.userRoleSubject.next(role);
-  }
-public getDecodedUserRole(): string | null {
-  const token = this.getToken();
-  if (!token) return null;
-
-  try {
-    const decodedToken: any = jwtDecode(token);
-    // Adjust key lookup to match your token structure
-    return decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
-  } catch (e) {
-    console.error("Invalid Token", e);
-    return null;
-  }
-}
-
-
-//  updateUserRole(roleFromAPI?: string) {
-//   let role = roleFromAPI || this.getDecodedUserRole();
-//   console.log('Updated Role:', role);
-//   this.userRoleSubject.next(role);
-// }
-
-
-  getUserRole(): Observable<string | null> {
-    return this.userRoleSubject.asObservable();
-  }
-
-  isAuthenticated(): boolean {
-    return !!this.getToken();
-  }
- 
-
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
-  }
-
-
-  registerAccount(account :Account):Observable<any>{
-    return this.http.post<Account[]>(this.baseUrlReg,account);
-  }
-  getAccount():Observable<Account[]>{
-    return this.http.get<Account[]>(this.baseUrl)
-  }
- 
-  deleteAccount(id: number):Observable<void> {
-     const url = `${this.baseUrl2}/${id}`
-    return this.http.delete<void>(url);
-  }
-  resetLink(email :string):Observable<any>{
-
-    return this.http.post<Account>(this.baseUrlReset,{email})
-  }
-  resetPassword(token: string, newPassword: string): Observable<any> {
-  return this.http.post('http://localhost:5139/api/auth/reset-password', {
-    token, newPassword
-  });
-}
-// sendOtp(PhoneNumber: string): Observable<any> {
-//   return this.http.post('http://localhost:5139/api/auth/send-otp', { PhoneNumber });
-// }
-sendOtp(phoneNumber: string) {
-  return this.http.post('http://localhost:5139/api/auth/send-otp', phoneNumber, {
-    headers: { 'Content-Type': 'application/json' },
-    responseType: 'text'
-  });
-}
-
-verifyOtp(PhoneNumber: string, otp: string): Observable<any> {
-  return this.http.post('http://localhost:5139/api/auth/verify-otp', { PhoneNumber, otp });
-}
-
-// isTokenExpired(): boolean {
-//   const token = localStorage.getItem('token');
-//   if (!token) return true;
-
-//   const decoded: any = jwtDecode(token);
-//   const now = Math.floor(Date.now() / 1000); // current time in seconds
-
-//   return decoded.exp < now;
-// }
-
-// startLogoutTimer(expInSec: number) {
-//   const nowMs = Date.now();
-//   const expMs = expInSec * 1000;
-//   const expiresInMs = expMs - nowMs;
-
-//   console.log(`Token expires at: ${new Date(expMs).toLocaleTimeString()}`);
-//   console.log(`Current time: ${new Date(nowMs).toLocaleTimeString()}`);
-//   console.log(`Milliseconds until expiry: ${expiresInMs}`);
-
-//   if (this.logoutTimer) clearTimeout(this.logoutTimer);
-
-//   if (expiresInMs <= 0) {
-//     alert("Session expired. You will be logged out.");
-//     this.logout();
-//     return;
-//   }
-
-//   const refreshBuffer = 1 * 60 * 1000; // 2 minutes
-//   const refreshTime = expiresInMs - refreshBuffer;
-// if (refreshTime > 0) {
-//   console.log(`Scheduling token refresh in ${refreshTime} ms`);
-//   this.logoutTimer = setTimeout(() => {
-//     console.log('Refreshing token now...');
-//     const decoded=localStorage.getItem('token');
-//        console.log("The token is:"+ decoded);
-//     this.refreshToken();
-//   }, refreshTime);
-// } else {
-//   console.log('Refresh time already passed, refreshing immediately');
-//   this.logout();
-// }
-// }
-
-updateLastActivity() {
-  this.lastActivityMs = Date.now();
-  // optional: persist so reloads have a notion of last activity
-  // localStorage.setItem('lastActivityMs', String(this.lastActivityMs));
-}
-
-getLastActivity(): number {
-  // optional: try to read persisted value
-  // const v = localStorage.getItem('lastActivityMs');
-  // return v ? Number(v) : this.lastActivityMs;
-  return this.lastActivityMs;
-}
-startLogoutTimer(expInSec: number) {
-  const nowMs = Date.now();
-  const expMs = expInSec * 1000;
-  const expiresInMs = expMs - nowMs;
-
-  console.log(`Token expires at: ${new Date(expMs).toLocaleTimeString()}`);
-  console.log(`Current time: ${new Date(nowMs).toLocaleTimeString()}`);
-  console.log(`Milliseconds until expiry: ${expiresInMs}`);
-
-  if (this.logoutTimer) clearTimeout(this.logoutTimer);
-
-  if (expiresInMs <= 0) {
-    alert("Session expired. You will be logged out.");
-    this.logout();
+/** Call this once after login or refresh to apply new access token, role & email */
+public setAuthState(token: string, role?: string | null, email?: string | null) {
+  if (!token) {
+    this.clearLocalAuth();
     return;
   }
 
-  const refreshBuffer = 60 * 1000; // refresh 60s before expiry
-  const refreshTime = expiresInMs - refreshBuffer;
+  // save token locally
+  this.saveAccessToken(token);
 
-  // idle threshold: if user inactive longer than this, do not refresh
-  const idleThresholdMs = 2 * 60 * 1000; // 2 minutes, tune as needed
-
-  if (refreshTime > 0) {
-    console.log(`Scheduling token refresh in ${refreshTime} ms`);
-    this.logoutTimer = setTimeout(() => {
-      console.log('Refresh timer triggered — checking user activity...');
-
-      const lastActivity = this.getLastActivity();
-      const idleMs = Date.now() - lastActivity;
-      console.log(`Idle time (ms): ${idleMs}`);
-
-      if (idleMs < idleThresholdMs) {
-        console.log('User active recently — refreshing token');
-        this.refreshToken();
-      } else {
-        console.log('User idle — logging out instead of refreshing');
-        this.logout();
-      }
-    }, refreshTime);
+  // store user metadata if provided
+  if (role) {
+    this.userRoleSubject.next(role);
+    localStorage.setItem('role', role);
   } else {
-    // if within buffer, do immediate check
-    const lastActivity = this.getLastActivity();
-    const idleMs = Date.now() - lastActivity;
-    if (idleMs < idleThresholdMs) {
-      console.log('Within buffer and user active — refreshing now');
-      this.refreshToken();
-    } else {
-      console.log('Within buffer and user idle — logging out');
-      this.logout();
-    }
+    // try decode fallback
+    try {
+      const decoded: any = jwtDecode(token);
+      const r = decoded?.role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+      this.userRoleSubject.next(r);
+      if (r) localStorage.setItem('role', r);
+    } catch { this.userRoleSubject.next(null); }
+  }
+
+  if (email) {
+    this.userEmail.next(email);
+    localStorage.setItem('email', email);
+  } else {
+    try {
+      const decoded: any = jwtDecode(token);
+      const e = decoded?.email ?? null;
+      this.userEmail.next(e);
+      if (e) localStorage.setItem('email', e);
+    } catch { this.userEmail.next(null); }
+  }
+
+  this.isLoggedInSubject.next(true);
+
+  // start token expiry timer from token exp if present
+  try {
+    const decoded: any = jwtDecode(token);
+    if (decoded?.exp) this.startLogoutTimer(decoded.exp);
+  } catch (e) {
+    // no exp - do nothing
   }
 }
 
+  // --- Storage helpers ---
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
 
-//  refreshToken() {
-//     const refreshToken = localStorage.getItem('refreshToken');
-//     if (!refreshToken) {
-//       this.logout();
-//       return;
-//     }
+  private saveAccessToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
+  }
 
-//   console.log('Starting token refresh');
+  private removeAccessToken() {
+    localStorage.removeItem(this.tokenKey);
+  }
 
-//  this.http.post<{ token: string; refreshToken: string }>(`${this.baseUrlRefresh}/refresh`, { refreshToken }).subscribe({
-//   next: res => {
-//     console.log('Token refreshed successfully', res);
-//     localStorage.setItem('token', res.token);
-//     localStorage.setItem('refreshToken', res.refreshToken);
-//  const decoded: any = jwtDecode(res.token);
-//   console.log('Decoded token after refresh:', decoded);
-//   const role = decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-//   console.log('Extracted role after refresh:', role);
-//   this.updateUserRole(role);
-//   this.startLogoutTimer(decoded.exp);
-//   },
-// error: err => {
-//   console.error('Refresh token failed', err);
-//   console.log('Current refreshToken:', refreshToken);
-//   alert('Session expired. You will be logged out.');
-//   this.logout();
-// }
-// });
-//   }
-// refreshToken() {
-//   this.http.post<{ token: string }>('http://localhost:5139/api/auth/refresh', {}).subscribe({
-//     next: (res) => {
-//       localStorage.setItem('token', res.token);
-      
-//       // Decode token to extract role and update BehaviorSubject
-//       const decoded: any = jwtDecode(res.token);
-//       const role = decoded.role || null;
-//       console.log('Role from refreshed token:', role);
-//       this.userRoleSubject.next(role);
+  // --- Init on startup ---
+  private loadUserFromStorage() {
+    const token = this.getToken();
+    if (!token) {
+      this.userRoleSubject.next(null);
+        this.userEmail.next(null);
+      this.isLoggedInSubject.next(false);
+      return;
+    }
 
-//       this.startLogoutTimer(decoded.exp); // reset timer
-//     },
-//     error: () => {
-//       this.logout();
-//     }
-//   });
-// }
-refreshToken() {
-  // We do NOT read any refresh token; cookie is HttpOnly and sent automatically.
-  console.log('Refreshing token (cookie-based)…');
+    try {
+      const decoded: any = jwtDecode(token);
+      const role = decoded?.role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+      const emailToken = decoded?.email || null;
 
-  this.http.post<{ token: string; role?: string }>(
-    `${environment.apiUrl}/auth/refresh`,
-    null,                    // empty body
-    { withCredentials: true }
-  ).subscribe({
-    next: (res) => {
-      console.log('Token refreshed', res);
-      if (!res?.token) { throw new Error('No token in refresh response'); }
+      this.userRoleSubject.next(role);
+      const emailFromStorage = localStorage.getItem('email');
+      const email = emailToken ?? emailFromStorage ?? null;
+        this.userEmail.next(email);
+        console.log("load form storage:"+ email + role)
+      this.isLoggedInSubject.next(true);
 
-      // store new access token only
-      localStorage.setItem('token', res.token);
-      if (res.role) localStorage.setItem('role', res.role);
-
-      // update role & timers
-      try {
-        const decoded: any = jwtDecode(res.token);
-        const role = res.role || decoded?.role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
-        this.userRoleSubject.next(role);
-        if (decoded?.exp) this.startLogoutTimer(decoded.exp);
-      } catch (e) {
-        console.error('Failed to decode refreshed token', e);
-        this.logout();
+      if (decoded?.exp) {
+        this.startLogoutTimer(decoded.exp);
       }
-    },
-    error: (err) => {
-      console.error('Refresh failed', err);
-      const serverMsg = err?.error?.message;
-      if (serverMsg) console.error('Server:', serverMsg);
+    } catch (err) {
+      console.warn('Invalid token in storage, clearing auth state', err);
+      this.clearLocalAuth();
+    }
+  }
+
+  // --- Public state helpers ---
+  public updateUserRole(role: string| null) {
+    this.userRoleSubject.next(role);
+    if (role) localStorage.setItem('role', role);
+    else localStorage.removeItem('role');
+  }
+   public updateUserEmail(email: string | null) {
+      this.userEmail.next(email);
+    if (email) localStorage.setItem('email', email);
+    else localStorage.removeItem('email');
+  }
+
+  public updateLoginState(isLoggedIn: boolean) {
+    this.isLoggedInSubject.next(isLoggedIn);
+    if (!isLoggedIn) {
+      // Clear local tokens/role when logging out locally
+      this.clearLocalAuth();
+    }
+  }
+
+  public getUserRole(): Observable<string | null> {
+    return this.currentUserRole$;
+  }
+  setUserEmail(email: string) {
+    this.userEmail.next(email);
+  }
+public getCurrentUserEmail(): Observable< string | null >{
+    return this.currentUserEmail$;
+  }
+
+  public isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  // Optional convenience: check token validity and update subjects
+  public isLoggedIn(): boolean {
+    const token = this.getToken();
+    if (!token) {
+      this.userRoleSubject.next(null);
+      this.userEmail.next(null);
+      this.isLoggedInSubject.next(false);
+      return false;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const exp = decoded?.exp;
+      if (typeof exp === 'number') {
+        const now = Math.floor(Date.now() / 1000);
+        if (exp <= now) {
+          this.userRoleSubject.next(null);
+           this.userEmail.next(null);
+          this.isLoggedInSubject.next(false);
+          return false;
+        }
+      }
+
+      const role =
+        decoded?.role ||
+        decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+        null;
+            const email =
+        decoded?.email  ||
+        null;
+
+      this.userRoleSubject.next(role);
+      this.userEmail.next(email);
+      this.isLoggedInSubject.next(true);
+      return true;
+    } catch (err) {
+      console.warn('Failed to decode token in isLoggedIn()', err);
+      this.userRoleSubject.next(null);
+       this.userEmail.next(null);
+      this.isLoggedInSubject.next(false);
+      return false;
+    }
+  }
+
+  // --- Activity tracking ---
+  updateLastActivity() {
+    this.lastActivityMs = Date.now();
+  }
+
+  getLastActivity(): number {
+    return this.lastActivityMs;
+  }
+
+  // --- Timers ---
+  public startLogoutTimer(expInSec: number) {
+    const nowMs = Date.now();
+    const expMs = expInSec * 1000;
+    const expiresInMs = expMs - nowMs;
+
+    console.log(`Token expires at: ${new Date(expMs).toLocaleTimeString()}`);
+    console.log(`Current time: ${new Date(nowMs).toLocaleTimeString()}`);
+    console.log(`Milliseconds until expiry: ${expiresInMs}`);
+
+    if (this.logoutTimer) clearTimeout(this.logoutTimer);
+
+    if (expiresInMs <= 0) {
       alert('Session expired. You will be logged out.');
       this.logout();
+      return;
     }
-  });
-}
 
+    const refreshBuffer = 60 * 1000; // refresh 60s before expiry
+    const refreshTime = expiresInMs - refreshBuffer;
+    const idleThresholdMs = 3 * 60 * 1000; // 3 minutes
 
-logout() {
+    if (refreshTime > 0) {
+      console.log(`Scheduling token refresh in ${refreshTime} ms`);
+      this.logoutTimer = setTimeout(() => {
+        console.log('Refresh timer triggered — checking user activity...');
+        const lastActivity = this.getLastActivity();
+        const idleMs = Date.now() - lastActivity;
+        console.log(`Idle time (ms): ${idleMs}`);
+
+        if (idleMs < idleThresholdMs) {
+          console.log('User active recently — refreshing token');
+          this.refreshToken();
+        } else {
+          console.log('User idle — logging out instead of refreshing');
+          this.logout();
+        }
+      }, refreshTime);
+    } else {
+      const lastActivity = this.getLastActivity();
+      const idleMs = Date.now() - lastActivity;
+      if (idleMs < idleThresholdMs) {
+        console.log('Within buffer and user active — refreshing now');
+        this.refreshToken();
+      } else {
+        console.log('Within buffer and user idle — logging out');
+        this.logout();
+      }
+    }
+  }
+
+  // --- Refresh token flow (cookie-based) ---
+  refreshToken() {
+    console.log('Refreshing token (cookie-based)…');
+
+    this.http
+      .post<{ token: string; role?: string; email?: string }>(
+        `${environment.apiUrl}/auth/refresh`,
+        null,
+        { withCredentials: true }
+      )
+      .subscribe({
+        next: (res) => {
+          console.log('Token refreshed', res);
+          if (!res?.token) {
+            console.error('No token in refresh response');
+            this.logout();
+            return;
+          }
+
+          // store new access token only
+          this.saveAccessToken(res.token);
+          if (res.role) localStorage.setItem('role', res.role);
+          if (res.email) localStorage.setItem('email', res.email);
+          
+
+          // update role & timers
+          try {
+            const decoded: any = jwtDecode(res.token);
+            const role =
+              res.role ||
+              decoded?.role ||
+              decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+              null;
+               const email =
+              res.email ||
+              decoded?.email ||
+              null;
+            this.userRoleSubject.next(role);
+            this.userEmail.next(email);
+            this.isLoggedInSubject.next(true);
+            if (decoded?.exp) this.startLogoutTimer(decoded.exp);
+          } catch (e) {
+            console.error('Failed to decode refreshed token', e);
+            this.logout();
+          }
+        },
+        error: (err) => {
+          console.error('Refresh failed', err);
+          const serverMsg = err?.error?.message;
+          if (serverMsg) console.error('Server:', serverMsg);
+          alert('Session expired. You will be logged out.');
+          this.logout();
+        }
+      });
+  }
+
+  logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     this.updateUserRole(null);
+     this.updateUserEmail(null);
      this.router.navigate(['/login']);
     // redirect or any other cleanup
   }
-  //   logout() {
-  // localStorage.removeItem(this.tokenKey);
-  //   this.userRoleSubject.next(null);
-  //    localStorage.removeItem('token_expiry');
-  //   this.router.navigate(['/login']);
-  //}
+
+  // --- Logout (client + server) ---
+  logout1() {
+    // optional: notify backend to revoke refresh token & clear cookies
+    this.http.post(`${environment.apiUrl}/auth/logout`, {}, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          this.clearLocalAuth();
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          // always clear local state even on failure
+          this.clearLocalAuth();
+          this.router.navigate(['/login']);
+        }
+      });
+  }
+
+  private clearLocalAuth() {
+    this.removeAccessToken();
+    localStorage.removeItem('role');
+    this.userRoleSubject.next(null);
+     this.userEmail.next(null);
+    this.isLoggedInSubject.next(false);
+
+    if (this.logoutTimer) {
+      clearTimeout(this.logoutTimer);
+      this.logoutTimer = null;
+    }
+  }
+
+  // --- Misc API helpers ---
+  registerAccount(account: Account): Observable<any> {
+    return this.http.post<Account[]>(this.baseUrlReg, account);
+  }
+
+  getAccount(): Observable<Account[]> {
+    return this.http.get<Account[]>(this.baseUrl);
+  }
+   getAccountById(email : string): Observable<Account[]> {
+        const url = `${this.baseUrl}/${email}`;
+    return this.http.get<Account[]>(url);
+  }
+  // auth-service.service.ts (add)
+// in auth-service.service.ts
+// verifyCurrentPassword(currentPassword: string) {
+//   return this.http.post<{ ok: boolean }>(
+//     `${environment.apiUrl}/auth/verify-current`,
+//     { currentPassword },
+//     { withCredentials: true }
+//   );
+// }
+
+verifyCurrentPassword(currentPassword: string) {
+  const token = this.getToken();
+  const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
+
+  return this.http.post<{ ok: boolean }>(
+    `${environment.apiUrl}/auth/verify-current`,
+    { currentPassword },
+    { headers, withCredentials: false } // if using JWT in header, do NOT need withCredentials
+  ).pipe(
+    map(r => !!r?.ok),
+    catchError(err => {
+      console.error('verifyCurrentPassword failed', err);
+      return of(false);
+    })
+  );
+}
+changePassword(currentPassword: string, newPassword: string) {
+  return this.http.post<{ ok?: boolean; message?: string }>(
+    `${environment.apiUrl}/auth/change-password`,
+    { currentPassword, newPassword },
+    { withCredentials: true }
+  );
+}
+
+  deleteAccount(id: number): Observable<void> {
+    const url = `${this.baseUrl2}/${id}`;
+    return this.http.delete<void>(url);
+  }
+
+  resetLink(email: string): Observable<any> {
+    return this.http.post<Account>(this.baseUrlReset, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post('http://localhost:5139/api/auth/reset-password', {
+      token, newPassword
+    });
+  }
+
+  sendOtp(phoneNumber: string) {
+    return this.http.post('http://localhost:5139/api/auth/send-otp', phoneNumber, {
+      headers: { 'Content-Type': 'application/json' },
+      responseType: 'text'
+    });
+  }
+
+  verifyOtp(PhoneNumber: string, otp: string): Observable<any> {
+    return this.http.post('http://localhost:5139/api/auth/verify-otp', { PhoneNumber, otp });
+  }
 }

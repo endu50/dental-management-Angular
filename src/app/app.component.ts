@@ -1,23 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { PatientRegisterComponent } from './patient-register/patient-register.component';
 import { CommonModule } from '@angular/common';
-import { AppointmentComponent } from './appointment/appointment.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { Router, RouterOutlet} from '@angular/router';
+import { Router, RouterOutlet,RouterLink,RouterLinkActive} from '@angular/router';
 import { FooterComponent } from './footer/footer.component';
 import { AuthService } from './auth-service.service';
-import { jwtDecode } from 'jwt-decode';
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent,FooterComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent,FooterComponent,RouterLink,RouterLinkActive], 
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
   title = 'DentalDanaClinick';
    isLoggedIn :boolean=false;
+   Role : any;
   /**
    *
    */
@@ -49,11 +48,20 @@ export class AppComponent implements OnInit {
     //   this.auth.logout();  // clear localStorage or token
     //   this.router.navigate(['/login']);  // redirect to login
     // }
-    this.isLoggedIn=  this.auth.isLoggedIn()
-    if(this.isLoggedIn)
-    {
-      this. isLoggedIn;
-    }
+  
+  // Subscribe to reactive login state (keeps UI in sync)
+  this.auth.isLoggedIn$.subscribe(status => {
+    this.isLoggedIn = status;
+    console.log("is logged in"+ this.isLoggedIn);
+    // optionally update UI or trigger other behaviors
+  });
+
+  // Subscribe to role if you need to show/hide items
+  this.auth.currentUserRole$.subscribe(role => {
+     this.Role= role;
+     console.log("the RolE"+ this.Role);
+  });
+
   }
  
 }

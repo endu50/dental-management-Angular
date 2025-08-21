@@ -33,11 +33,12 @@ export class AppointcrudComponent implements OnInit {
   initForm() {
     this.appointForm = this.fb.group({
       appointId: [null],
-      patientName: ['', [Validators.required, Validators.minLength(3)]],
+      patientName: ['', Validators.required],
+      phone: ['',Validators.required],
       appointmentDate: ['', Validators.required],
       treatmentType: ['', Validators.required],
       dentistName: ['', Validators.required],
-      status: ['']
+      status: ['',Validators.required]
     });
   }
   get f() {
@@ -53,7 +54,9 @@ export class AppointcrudComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.appointForm.invalid) return;
+    if (this.appointForm.invalid)
+       alert('Please fill all required fields correctly'); 
+      
   
     let formValue: Appoint = this.appointForm.value;
   
@@ -77,6 +80,7 @@ export class AppointcrudComponent implements OnInit {
       console.log('Creating appointment with:', formValue);
       this.appointService.createAppointment(formValue).subscribe({
         next: () => {
+           alert('The Appointment is Added Successfully');
           this.loadAllAppointments();
           this.resetForm();
         },
@@ -137,7 +141,7 @@ export class AppointcrudComponent implements OnInit {
     return this.appointments.filter(a =>{
       const matchText=this.searchText
     ?  a.patientName.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      a.treatmentType.toLowerCase().includes(this.searchText.toLowerCase()) 
+      a.phone.toLocaleString().includes(this.searchText.toLowerCase()) 
         : true;
 
      // Date search filter

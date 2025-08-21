@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface Appoint {
   appointId?: number;
   patientName: string;
+  phone :number;
   appointmentDate: Date;
   treatmentType: string;
   dentistName: string;

@@ -58,9 +58,10 @@
               <tr>
                 <th>OrderNo</th>
                 <th>patientName</th>
-                <th>treatmentType</th>
-                <th>dentistName</th>
-                <th>appointmentDate</th>
+                <th>PhoneNumber</th>
+                <th>TreatmentType</th>
+                <th>DentistName</th>
+                <th>AppointmentDate</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -69,6 +70,7 @@
         <tr >
           <td>{{ i + 1 }}</td>
           <td>{{ appoint.patientName }}</td>
+           <td>{{ appoint.phone }}</td>
           <td>{{ appoint.treatmentType }}</td>
           <td>{{ appoint.dentistName }}</td>
           <td>{{ appoint.appointmentDate | date:'shortDate' }}</td>
@@ -120,8 +122,9 @@
             </div>
           </div>
       </div>
+      <div class="w-50">
       <table class="table table-bordered">
-    <thead class="table-light">
+    <thead class="table-primary">
       <tr>
         <th>#</th>
         <th>Item Name</th>
@@ -151,5 +154,7 @@
       </tr>
     </tbody>
   </table>
+  </div>
   <!-- </div> -->
 </div>
+ 

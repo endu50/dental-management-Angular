@@ -20,6 +20,7 @@ export class AppointmentComponent implements OnInit {
   ngOnInit(): void {
     this.appointForm = this.fb.group({
       patientName: ['', [Validators.required,Validators.minLength(5)]],
+      phone:['',[Validators.required,Validators.pattern(/^\d{10}$/)]],
       appointmentDate: ['', Validators.required],
       treatmentType: ['', Validators.required],
       dentistName: ['', Validators.required],
@@ -46,6 +47,9 @@ export class AppointmentComponent implements OnInit {
         this.appointForm.reset();
         
       });
+    }
+    else {
+       alert('Please fill all required fields correctly');
     }
   }
 

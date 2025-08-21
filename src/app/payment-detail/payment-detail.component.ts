@@ -113,6 +113,7 @@ getPayments() {
   const updatePayment= {
   ...payment, paymentStatus:payment.paymentStatus
   };
+  if(confirm('Are you Sure To Update Payment Status?'))
    this.paymentser.updatePaymentStatus(updatePayment).subscribe({
     next:(data)=> {
       // this.payment = data;

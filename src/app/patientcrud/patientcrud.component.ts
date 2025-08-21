@@ -22,6 +22,7 @@ errorMessage: string = '';
 searchText : string ='';
 page: number = 1;
 pageSize: number = 7;
+isActive: boolean=false;
 
 constructor(private fb:FormBuilder , private patientservice: PatientService) {
 
@@ -31,8 +32,8 @@ constructor(private fb:FormBuilder , private patientservice: PatientService) {
     this.formpatient= this.fb.group({
       id:[null],
       fullName:['',Validators.required],
-      email: ['',[Validators.required,Validators.email]],
-      phone:['',[Validators.required,Validators.pattern(/^\d{10}$/)]],
+      email: ['',Validators.required],
+      phone:['',Validators.required],
       gender: ['',Validators.required],
       dateOfBirth: ['',Validators.required]
     })
@@ -56,6 +57,7 @@ editPatient(patient : Patient){
 this.formpatient.patchValue({
   ...patient, dateOfBirth:formattedDate
 });
+this.isActive=true;
 }
 isFormEmpty(): boolean {
   const values = this.formpatient.value;
@@ -71,6 +73,7 @@ updatePatient(){
   };
   this.patientservice.updatePatient(formvalue).subscribe({
     next:(data)=>{
+      alert("The patient Field Is Updated Successfully!!");
       this.loadAllPatients();
       this.resetForm();
 
@@ -99,13 +102,16 @@ deletePatientById(id:number){
 AddPatient(){
   if (this.formpatient.invalid) {
     this.errorMessage = 'Please fill all required fields correctly';
+    alert('Please fill all required fields correctly');
     return;
   }
- const patient =this.formpatient.value;
-  this.patientservice.registerPatient(patient).subscribe({
+    let formValue: Patient = this.formpatient.value;
+    delete formValue.id;
+// const patient =this.formpatient.value;
+   
+  this.patientservice.registerPatient(formValue).subscribe({
    next:(data)=> { 
-    console.log("the form Submited",data);
-    console.log('Submitting patient:', this.formpatient.value);
+   alert("The patient is registered successfully!!");
     this.loadAllPatients();
     this.resetForm();
    },
@@ -120,6 +126,7 @@ AddPatient(){
 }
 resetForm(){
   this.formpatient.reset();
+  this.isActive=false;
 }
 
   loadAllPatients(){

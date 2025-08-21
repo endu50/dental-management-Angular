@@ -1,14 +1,13 @@
  <div class="container align-content-center justify-content-center m-2">
-   <h1 class="text-primary mb-3">Detail Payment and Search</h1>
+   <h1 class="text-primary mb-3 text-center bg-info">Search and Payment Detail Page</h1>
     <form [formGroup]="formPayment">
-   <div class="row">
-    <div class="col-md-3">
-      <label class="form-label"><strong>Enter PatientId | PaymentMethod:</strong></label>
-    </div>
-    <div class="col-md-4 mb-3">
+   <div class="d-flex mb-2">
+  
+    <strong class="mt-2">Search On Box:</strong>
+  
     <!-- <label class="form-label"><strong>Search Payment by Id and Payment Method </strong> </label> -->
-    <input type="text" class="form-control border-info" placeholder="Search Payment by PatientId and Payment Method" formControlName="paymentId">
-    </div>
+    <input type="text" class="form-control border-info w-50" placeholder="Search Payment by PatientId and Payment Method" formControlName="paymentId">
+    
       <!-- <div class="col-md-2">
  <button class="btn btn-secondary " (click)="clearInput()"> Clear </button>
   </div> -->
@@ -25,10 +24,10 @@
    placeholder="Search Payment by Last Date" formControlName="datePaymentEnd">
   </div>
  
-  <div class="col-md-2 mb-3">
+  <div class="col-md-2 mb-2">
  <button type="button" (click)="clearInput()" class="btn btn-secondary ">Clear</button>
   </div>
-   <div class="bg-success text-end mt-3 fs-4"  *ngIf="filteredPayments"><Strong>Total Summery Birr:=</Strong>{{ totalSummeryValue | currency}} </div>  
+   <div class="bg-info text-end mt-3 fs-4"  *ngIf="filteredPayments"><Strong>Total Summery Birr:=</Strong>{{ totalSummeryValue | currency}} </div>  
   </div>
 </form>
 </div>

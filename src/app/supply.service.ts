@@ -9,6 +9,7 @@ export interface Supply {
   category: string;  // e.g., "Glove", "Medicine", "Equipment"
   quantity: number;
   unit: string; // e.g., "Box", "Pieces", "Bottles"
+  dateEntered: Date;
   reorderLevel: number; // Minimum quantity before low-stock alert
 }
 
