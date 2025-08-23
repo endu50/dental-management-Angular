@@ -89,9 +89,10 @@ export class LoginComponent {
       },
       error: (err) => {
         console.error('Login failed', err);
+         this.forgetpassowrd=true;
        
         alert('Invalid credentials');
-         this.forgetpassowrd=true;
+        
       }
     });
   }

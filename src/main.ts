@@ -11,6 +11,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(withInterceptorsFromDi()), // ✅ Modern replacement for HttpClientModule
     provideRouter(routes),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 
   ]
 }).catch(err => console.error(err));

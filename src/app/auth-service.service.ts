@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable,throwError } from 'rxjs';
 import { environment } from '../environments/environment/environment.component'; // keep your existing pat
 import { HttpHeaders } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
+import { tap, catchError,map } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 export interface Account {
@@ -283,61 +283,27 @@ public getCurrentUserEmail(): Observable< string | null >{
   }
 
   // --- Refresh token flow (cookie-based) ---
-  refreshToken() {
-    console.log('Refreshing token (cookie-based)…');
-
-    this.http
-      .post<{ token: string; role?: string; email?: string }>(
-        `${environment.apiUrl}/auth/refresh`,
-        null,
-        { withCredentials: true }
-      )
-      .subscribe({
-        next: (res) => {
-          console.log('Token refreshed', res);
-          if (!res?.token) {
-            console.error('No token in refresh response');
-            this.logout();
-            return;
-          }
-
-          // store new access token only
-          this.saveAccessToken(res.token);
-          if (res.role) localStorage.setItem('role', res.role);
-          if (res.email) localStorage.setItem('email', res.email);
-          
-
-          // update role & timers
-          try {
-            const decoded: any = jwtDecode(res.token);
-            const role =
-              res.role ||
-              decoded?.role ||
-              decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
-              null;
-               const email =
-              res.email ||
-              decoded?.email ||
-              null;
-            this.userRoleSubject.next(role);
-            this.userEmail.next(email);
-            this.isLoggedInSubject.next(true);
-            if (decoded?.exp) this.startLogoutTimer(decoded.exp);
-          } catch (e) {
-            console.error('Failed to decode refreshed token', e);
-            this.logout();
-          }
-        },
-        error: (err) => {
-          console.error('Refresh failed', err);
-          const serverMsg = err?.error?.message;
-          if (serverMsg) console.error('Server:', serverMsg);
-          alert('Session expired. You will be logged out.');
-          this.logout();
-        }
-      });
-  }
-
+refreshToken(): Observable<{ token: string; role?: string; email?: string }> {
+  return this.http.post<{ token: string; role?: string; email?: string }>(
+    `${environment.apiUrl}/auth/refresh`,
+    null,
+    { withCredentials: true }
+  ).pipe(
+    tap(res => {
+      if (!res?.token) {
+        // no valid token -> force logout
+        this.clearLocalAuth();
+        throw new Error('No token in refresh response');
+      }
+      // update local state via your helper
+      this.setAuthState(res.token, res.role ?? null, res.email ?? null);
+    }),
+    catchError(err => {
+      // keep the error for interceptor to handle
+      return throwError(() => err);
+    })
+  );
+}
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
@@ -400,13 +366,10 @@ public getCurrentUserEmail(): Observable< string | null >{
 // }
 
 verifyCurrentPassword(currentPassword: string) {
-  const token = this.getToken();
-  const headers = token ? new HttpHeaders({ 'Authorization': `Bearer ${token}` }) : undefined;
-
   return this.http.post<{ ok: boolean }>(
     `${environment.apiUrl}/auth/verify-current`,
-    { currentPassword },
-    { headers, withCredentials: false } // if using JWT in header, do NOT need withCredentials
+    { currentPassword }
+    // no custom options needed if interceptor attaches Authorization header
   ).pipe(
     map(r => !!r?.ok),
     catchError(err => {
@@ -415,13 +378,18 @@ verifyCurrentPassword(currentPassword: string) {
     })
   );
 }
-changePassword(currentPassword: string, newPassword: string) {
-  return this.http.post<{ ok?: boolean; message?: string }>(
+
+// auth.service.ts
+changePassword(currentPassword: string, newPassword: string)
+  : Observable<{ ok?: boolean; message?: string; errors?: string[] }> {
+  return this.http.post<{ ok?: boolean; message?: string; errors?: string[] }>(
     `${environment.apiUrl}/auth/change-password`,
     { currentPassword, newPassword },
     { withCredentials: true }
   );
 }
+
+
 
   deleteAccount(id: number): Observable<void> {
     const url = `${this.baseUrl2}/${id}`;

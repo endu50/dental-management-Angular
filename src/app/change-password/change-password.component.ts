@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { Validator } from '@angular/forms';
 import { AuthService } from '../auth-service.service';
 import { Account } from '../auth-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-change-password',
@@ -20,7 +21,7 @@ export class ChangePasswordComponent implements OnInit {
    Role: any ;
    Email: any;
 
-  constructor(private fb:FormBuilder,private auth: AuthService){}
+  constructor(private fb:FormBuilder,private auth: AuthService, private route :Router){}
 
   ngOnInit(): void {
 
@@ -51,17 +52,38 @@ export class ChangePasswordComponent implements OnInit {
  
 
 
-  passwordMatch(changeForm: FormGroup) {
-  const newPassword = changeForm.get('newPassword')?.value;
-  const conNewPassword = changeForm.get('conNewPassword')?.value;
+//   passwordMatch(changeForm: FormGroup) {
+//   const newPassword = changeForm.get('newPassword')?.value;
+//   const conNewPassword = changeForm.get('conNewPassword')?.value;
 
-  if (newPassword !== conNewPassword) {
-    changeForm.get('conNewPassword')?.setErrors({ mismatch: true });
+//   if (newPassword !== conNewPassword) {
+//     changeForm.get('conNewPassword')?.setErrors({ mismatch: true });
+//   } else {
+//     changeForm.get('conNewPassword')?.setErrors(null);
+//   }
+//   return null;
+// }
+passwordMatch(changeForm: FormGroup) {
+  const newPassword = changeForm.get('newPassword')?.value;
+  const conNewPasswordCtrl = changeForm.get('conNewPassword');
+
+  if (!conNewPasswordCtrl) return null;
+
+  // Keep existing errors (like required)
+  const errors = conNewPasswordCtrl.errors || {};
+
+  if (conNewPasswordCtrl.value && newPassword !== conNewPasswordCtrl.value) {
+    errors['mismatch'] = true;
   } else {
-    changeForm.get('conNewPassword')?.setErrors(null);
+    delete errors['mismatch'];
   }
+
+  // If there are no errors left, set to null
+  conNewPasswordCtrl.setErrors(Object.keys(errors).length ? errors : null);
+
   return null;
 }
+
 
   onChangePassword(){
       // First: verify current password on server
@@ -82,12 +104,16 @@ export class ChangePasswordComponent implements OnInit {
       this.auth.changePassword(currentPassword, newPassword).subscribe(res => {
         this.isWorking = false;
         if (res?.ok) {
-          alert(res.message || 'Password changed successfully');
-          this.resetForm();
+          alert(res.message || 'Password changed successfully. Login To Continue ');
+          this.auth.logout();
+          //this.route.navigate(['/login']);
+          
+          //this.resetForm();
+
         } else {
           // show server-side errors
-         // this.serverErrors = res?.errors ?? ['Unable to change password'];
-         this.serverErrors = (res as any)?.errors ?? ['Unable to change password'];
+          this.serverErrors = res?.errors ?? ['Unable to change password'];
+        // this.serverErrors = (res as any)?.errors ?? ['Unable to change password'];
 
           // if server included message(s), mark controls as invalid if appropriate
           this.changeForm.get('newPassword')?.setErrors({ server: true });
@@ -107,6 +133,10 @@ export class ChangePasswordComponent implements OnInit {
 
   resetForm(){
     this.changeForm.reset();
+   this.serverErrors=[];
+   this.isWorking = false;
+     this.changeForm.patchValue({ email: this.Email });
+     this.changeForm.patchValue({role : this.Role})
   }
 
 }
