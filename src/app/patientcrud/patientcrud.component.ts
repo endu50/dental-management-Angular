@@ -37,7 +37,9 @@ constructor(private fb:FormBuilder , private patientservice: PatientService) {
       gender: ['',Validators.required],
       dateOfBirth: ['',Validators.required]
     })
+ 
     this.loadAllPatients();
+
   }
 
   get f(){
@@ -76,6 +78,7 @@ updatePatient(){
       alert("The patient Field Is Updated Successfully!!");
       this.loadAllPatients();
       this.resetForm();
+         this.formpatient.patchValue({gender : ""});
 
     },
     error: (err)=> {
@@ -114,6 +117,7 @@ AddPatient(){
    alert("The patient is registered successfully!!");
     this.loadAllPatients();
     this.resetForm();
+       this.formpatient.patchValue({gender : ""});
    },
    error: (err) => {
     if (err.status === 400 && err.error?.errors) {
@@ -126,6 +130,7 @@ AddPatient(){
 }
 resetForm(){
   this.formpatient.reset();
+     this.formpatient.patchValue({gender : ""});
   this.isActive=false;
 }
 

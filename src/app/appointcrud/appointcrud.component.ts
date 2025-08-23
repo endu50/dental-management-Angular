@@ -27,6 +27,7 @@ export class AppointcrudComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.loadAllAppointments();
+    
   }
   
 
@@ -54,8 +55,10 @@ export class AppointcrudComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.appointForm.invalid)
+    if (this.appointForm.invalid){
        alert('Please fill all required fields correctly'); 
+      return;
+    }
       
   
     let formValue: Appoint = this.appointForm.value;
@@ -72,6 +75,7 @@ export class AppointcrudComponent implements OnInit {
           this.loadAllAppointments();
           alert('The Appointment is Updated Successfully');
           this.resetForm();
+          this.appointForm.patchValue({status :""});
         },
         error: err => console.error('Update error:', err)
       });
@@ -83,6 +87,7 @@ export class AppointcrudComponent implements OnInit {
            alert('The Appointment is Added Successfully');
           this.loadAllAppointments();
           this.resetForm();
+          this.appointForm.patchValue({status :""});
         },
         error: err => {
           console.error('Create error:', err);
@@ -109,6 +114,7 @@ export class AppointcrudComponent implements OnInit {
 
   resetForm() {
     this.appointForm.reset();
+    this.appointForm.patchValue({status :""});
     this.isEditMode = false;
   }
 

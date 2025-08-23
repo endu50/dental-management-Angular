@@ -27,7 +27,7 @@
 
           <div class="mb-2">
             <label class="form-label">Phone Number:</label>
-            <input class="form-control" type="text" formControlName="PhoneNumber">
+            <input class="form-control" type="number" formControlName="PhoneNumber">
             <div class="error-block text-danger mt-1" *ngIf="f['PhoneNumber'].touched && f['PhoneNumber'].invalid">
               <small *ngIf="f['PhoneNumber'].errors?.['required']">Phone Number is required</small>
               <small *ngIf="f['PhoneNumber'].errors?.['pattern']">Phone Number should be 10 digits</small>
@@ -36,12 +36,13 @@
 
           <div class="mb-2 otp-box p-3 rounded-3">
             <label class="form-label fw-bold">OTP Code:</label>
-            <input class="form-control" type="text" formControlName="OtpCode">
+            <input class="form-control" type="number" formControlName="OtpCode">
           </div>
 
           <div class="mb-2 role-box p-3 rounded-3">
             <label class="form-label fw-bold">Role:</label>
             <select class="form-select" formControlName="Role">
+              <option value="" disabled hidden selected>Select Role</option>
               <option value="Admin">Admin</option>
               <option value="User">User</option>
             </select>
@@ -66,7 +67,8 @@
             </div>
           </div>
 
-          <button [disabled]="!form.valid" class="btn btn-primary w-100" type="submit">Register</button>
+          <button [disabled]="!form.valid" class="btn btn-primary w-25 mx-2" type="submit">Register</button>
+           <button  class="btn btn-secondary w-25" type="button" (click)="resetForm()">Clear</button> 
         </form>
       </div>
     </div> 

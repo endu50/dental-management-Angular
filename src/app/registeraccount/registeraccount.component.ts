@@ -67,6 +67,7 @@ export class RegisteraccountComponent {
         console.log('Registered:', data);
         alert("The Account Registered successfully");
         this.form.reset();
+        this.form.patchValue({Role: ""});
       },
       error : (err) => {
           if(err==500 && err?.error?.errors)
@@ -74,5 +75,9 @@ export class RegisteraccountComponent {
         }
       })
     }
+  }
+  resetForm(){
+    this.form.reset();
+      this.form.patchValue({Role: ""});
   }
 }
