@@ -13,10 +13,10 @@
             </li>
                 
               <li class="nav-item">
-                <a *ngIf="role === 'User'" class="nav-link" routerLink="/register" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Register</a>
+                <a *ngIf="role === 'User'" class="nav-link" routerLink="/register" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">RegisterPatient</a>
               </li>
               <li class="nav-item">
-              <a *ngIf="role === 'User'" class="nav-link" routerLink="/appointment" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Appointments</a>
+              <a *ngIf="role === 'User'" class="nav-link" routerLink="/appointment" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">AppointmentShedule</a>
          
             <li class="nav-item">
               <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/appointmentaction" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">AppointmentAction</a>
@@ -28,9 +28,6 @@
           <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/registeraccount" routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">RegisterAccount</a>
              </li>
               
-               <li class="nav-item">
-              <a *ngIf="role === 'Admin' || role === 'User' " class="nav-link" routerLink="/change-password" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Change Password</a>
-            </li>
             <li class="nav-item">
               <a *ngIf="role === 'Admin'" class="nav-link" routerLink="/adminaccount" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">AdminAccount</a>
             </li>
@@ -53,8 +50,8 @@
   
       </ul>
         <form class="d-flex " role="search">
-          <input class="form-control me-2 bi-search-heart-fill " type="search" placeholder="Search" aria-label="Search"/>
-          <ul >
+       <input class="form-control me-2 bi-search-heart-fill " type="search" placeholder="Search" aria-label="Search"/>
+          <ul class="mx-5" >
                     <li class="nav-item dropdown list-unstyled">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Account
@@ -65,6 +62,8 @@
           </li>
           <li class="nav-item">
           <a *ngIf="isAuthenticated()" class="nav-link"><i class="bi bi-person-circle"></i> Profile</a>
+          <a  *ngIf="role === 'Admin' || role === 'User' " class="nav-link" routerLink="/change-password" 
+              routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"> <i class="bi bi-lock"></i>Change Password</a>
           <a *ngIf="isAuthenticated()" class="nav-link" href="#" (click)="logout()"><i class="bi bi-box-arrow-right"></i> Logout </a>
         </li>
         

@@ -3,22 +3,32 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <!-- Payment Method Selection -->
+     <div class="text-end">
+      <button type="button" class="btn btn-secondary" (click)="resetForm()">Clear</button>
+     </div>
     <div class="mb-3">
       <label class="form-label bg-warning">Payment Method</label>
-      <select formControlName="method" class="form-select">
+      <select formControlName="method" class="form-select border-primary">
+        <option value="">Select Payment Method</option>
         <option value="online">Online Payment</option>
         <option value="cash">Cash Payment</option>
       </select>
+      <div class="error-block" *ngIf="f['method'].touched && f['method'].invalid">
+        <small *ngIf="f['method']?.errors?.['required']">Payment Method is Required</small>
+      </div>
     </div>
 
     <!-- Cash Payment Fields -->
          <div class="mb-3">
         <label  class="form-label">Patient ID</label>
-        <input type="text" (change)="onChangeHandler($event)" formControlName="patientId" class="form-control" placeholder="Enter Patient ID"  />
+        <input type="text" (change)="onChangeHandler($event)" formControlName="patientId" class="form-control border-warning" placeholder="Enter Patient ID"  />
   <!-- Show patient name if found -->
 <div *ngIf="patient">
-    <strong>Patient Name:</strong> {{ patient.fullName}}
+    <strong>Patient Name:</strong> <strong class="bg-warning fs-5"> {{ patient.fullName}}</strong>
   </div>
+        <div class="error-block" *ngIf="f['patientId'].touched && f['patientId'].invalid">
+        <small *ngIf="f['patientId']?.errors?.['required']">patient Id is Required</small>
+      </div>
 </div>
    
                   <div class="mb-3">
@@ -26,9 +36,12 @@
         <input
           type="number"
           formControlName="amount"
-          class="form-control"
+          class="form-control border-danger"
           placeholder="Enter amount"
         />
+                <div class="error-block" *ngIf="f['amount'].touched && f['amount'].invalid">
+        <small *ngIf="f['amount']?.errors?.['required']">Amount Money is Required</small>
+      </div>
       </div>
       <div class="mb-3">
         <label class="form-label">Payment Description</label>
@@ -36,8 +49,11 @@
           type="text"
           placeholder="Enter Description"
           formControlName="paymentDescription"
-          class="form-control"
+          class="form-control border-info"
         />
+                 <div class="error-block" *ngIf="f['paymentDescription'].touched && f['paymentDescription'].invalid">
+        <small *ngIf="f['paymentDescription']?.errors?.['required']">Payment Description is Required</small>
+      </div>
       </div>
       
       <div class="mb-3">
@@ -45,16 +61,23 @@
         <input
           type="datetime-local"
           formControlName="datePayment"
-          class="form-control"
+          class="form-control border-black"
         />
+         <div class="error-block" *ngIf="f['datePayment'].touched && f['datePayment'].invalid">
+        <small *ngIf="f['datePayment']?.errors?.['required']">Date Payment is Required</small>
+      </div>
       </div>
       
       <div  class="mb-3">
         <label class="form-label">Payment Status</label>
-    <select formControlName="paymentStatus" class="form-select">
+    <select formControlName="paymentStatus" class="form-select border-warning">
+      <option value="">Select Payment Status</option>
         <option value="Pending">Pending</option>
         <option value="Paid">Paid</option>
       </select>
+          <div class="error-block" *ngIf="f['paymentStatus'].touched && f['paymentStatus'].invalid">
+        <small *ngIf="f['paymentStatus']?.errors?.['required']">Payment Status is Required</small>
+      </div>
       </div>
 
     <div class="text-center">

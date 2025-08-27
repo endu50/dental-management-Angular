@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,OnDestroy } from '@angular/core';
 import { FormGroup,FormBuilder,ReactiveFormsModule,Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { payment, PaymentService } from '../payment.service';
 import { Patient, PatientService } from '../patient.service';
+import { Router } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-reciept',
   imports: [ReactiveFormsModule,CommonModule],
@@ -15,11 +18,12 @@ receiptForm: FormGroup;
   generatedReceipt: payment | null = null;
   payments : payment []=[];
   patients : Patient | null =null;
-  totalpay: number=0;
+  totalpay: number=0; 
+  private clockSub?: Subscription;
   
 
 
-  constructor(private fb: FormBuilder, private receiptService: PaymentService,private patientSer :PatientService) {
+  constructor(private fb: FormBuilder, private receiptService: PaymentService,private patientSer :PatientService , private route: Router) {
    this.receiptForm = this.fb.group({
   patientId: ['', Validators.required],
   patientName: [''],
@@ -35,11 +39,34 @@ receiptForm: FormGroup;
 ;
   }
 ngOnInit(): void {
-  this.receiptForm.patchValue({ issuedDate: new Date().toLocaleDateString('en-CA') });
-
-  this.receiptForm.get('startDate')?.valueChanges.subscribe(() => this.filterDate());
+  // Set default to "now" (local) formatted for datetime-local input
+  const nowLocal = this.toDateTimeLocalString(new Date());
+  this.receiptForm.patchValue({ issuedDate: nowLocal });
+     this.receiptForm.get('startDate')?.valueChanges.subscribe(() => this.filterDate());
   this.receiptForm.get('endDate')?.valueChanges.subscribe(() => this.filterDate());
+}
 
+private toDateTimeLocalString(d: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+  // include seconds if you want: const seconds = pad(d.getSeconds());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`; // "2025-08-25T14:30"
+
+}
+
+ngOnDestroy(): void {
+  this.clockSub?.unsubscribe();
+}
+
+
+onBack(){
+  this.route.navigate(['/payment']);
 }
 
   getPatiendId()
@@ -124,7 +151,7 @@ filterPayment(event: Event) {
     },
     error: (err) => {
       console.error('Error fetching payments:', err);
-      alert('Error retrieving payment data.');
+      alert('Payment data not Found !!!');
     }
   });
 }
@@ -184,8 +211,8 @@ onClear()
   this.patients = null;
     this.payments = [];
   this.filteredPayments = [];
-   this.receiptForm.patchValue({
-    issuedDate: new Date().toLocaleDateString('en-CA')});
+   const nowLocal = this.toDateTimeLocalString(new Date());
+  this.receiptForm.patchValue({ issuedDate: nowLocal });
       //totalPayments: 0
   
 }

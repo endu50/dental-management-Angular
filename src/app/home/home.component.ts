@@ -43,4 +43,10 @@ Onappoint() {
   this.router.navigate(['/appointment']);
 }
 
+onPay() {
+  // Navigate to Appointment Booking Page
+  this.router.navigate(['/payment']);
+}
+
+
 }

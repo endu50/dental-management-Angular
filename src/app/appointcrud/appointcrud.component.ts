@@ -66,7 +66,7 @@ export class AppointcrudComponent implements OnInit {
     // Format date to ISO string (only if needed by backend)
     formValue = {
       ...formValue,
-      appointmentDate: new Date(formValue.appointmentDate)
+      appointmentDate: new Date(formValue.appointmentDate), phone: this.appointForm.value.phone.toString()
     };
   
     if (this.isEditMode) {

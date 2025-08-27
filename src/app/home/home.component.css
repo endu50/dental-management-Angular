@@ -11,4 +11,129 @@ h1 {
   button {
     font-size: 1.2rem;
   }
+
+  .price-btn {
+    transition: transform 0.25s ease;
+  }
+
+  /* Glow animations for buttons */
+  @keyframes glowPulseBlue {
+    0%, 100% { box-shadow: 0 0 8px #0d6efd; }
+    50% { box-shadow: 0 0 18px #0d6efd; }
+  }
+
+  @keyframes glowPulseGreen {
+    0%, 100% { box-shadow: 0 0 8px #198754; }
+    50% { box-shadow: 0 0 18px #198754; }
+  }
+
+  @keyframes glowPulseRed {
+    0%, 100% { box-shadow: 0 0 8px #dc3545; }
+    50% { box-shadow: 0 0 18px #dc3545; }
+  }
+
+  .btn-outline-primary:hover {
+    transform: scale(1.05);
+    border-color: #0d6efd;
+    animation: glowPulseBlue 1.5s infinite;
+  }
+
+  .btn-outline-success:hover {
+    transform: scale(1.05);
+    border-color: #198754;
+    animation: glowPulseGreen 1.5s infinite;
+  }
+
+  .btn-outline-danger:hover {
+    transform: scale(1.05);
+    border-color: #dc3545;
+    animation: glowPulseRed 1.5s infinite;
+  }
+
+  /* 🔥 Glowing underline for header */
+  .header-glow h2 {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+  }
+
+  .header-glow h2::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 0 8px #fff;
+    transform: translateX(-50%);
+    transition: width 0.4s ease;
+  }
+
+  .header-glow h2:hover::after {
+    width: 100%;
+    animation: headerGlow 1.5s infinite alternate;
+  }
+
+  @keyframes headerGlow {
+    0%   { box-shadow: 0 0 8px #fff; }
+    100% { box-shadow: 0 0 18px #fff; }
+  }
+
+  /* 🌟 Card hover effect */
+  .service-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .service-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(13, 110, 253, 0.5);
+  }
   
+  /* Header glow effect */
+  .header-glow h2 {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 5px;
+  }
+
+  .header-glow h2::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 3px;
+    background: #0d6efd;
+    border-radius: 2px;
+    box-shadow: 0 0 8px #0d6efd;
+    transform: translateX(-50%);
+    transition: width 0.4s ease;
+  }
+
+  .header-glow h2:hover::after {
+    width: 100%;
+    animation: headerGlow 1.5s infinite alternate;
+  }
+
+  @keyframes headerGlow {
+    0%   { box-shadow: 0 0 8px #0d6efd; }
+    100% { box-shadow: 0 0 18px #0d6efd; }
+  }
+
+  /* Team card hover effect */
+  .team-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .team-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 15px rgba(13,110,253,0.3);
+  }
+
+  .team-card img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+  }

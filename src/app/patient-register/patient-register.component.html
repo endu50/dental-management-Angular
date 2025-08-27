@@ -1,9 +1,16 @@
 
-<div class="container  d-flex justify-content-center align-items-center mt-5">
-  <div class="w-100" style="max-width: 1200px;">
+<div class="container-fluid my-3">
+  <div class="bg-dark-subtle text-center mb-5">
+    <h2>Patient Registration And Display Page!</h2>
+  </div>
+  <div class="row mb-3">
+  <div class="col-md-5 left-panel">
+
+  <!-- <div class="w-100" style="max-width: 1200px;"> -->
+
   <div class="card shadow-lg">
     <div class="card-header">
-<h2 class="text-center mt-5 bg-primary-subtle ">Patient Registration Page</h2>
+<h2 class="text-center mt-5 bg-warning-subtle ">Patient Registration Page</h2>
 <div *ngIf="patientIdAfterSubmit" class="alert alert-success mt-3">
   <strong>New Patient ID:</strong> {{ patientIdAfterSubmit }}
 </div>
@@ -11,7 +18,7 @@
 <div class="card-body">
 <form [formGroup]="patientForm" (ngSubmit)="onSubmit()">
   <div class="mb-3">
-    <label class="form-label">Full Name</label>
+    <label class="form-label">Full Name:</label>
     <input type="text" formControlName="fullName" class="form-control" placeholder="Enter full name">
     <div class="text-danger" *ngIf="f['fullName'].touched && f['fullName'].invalid">
       <small *ngIf="f['fullName'].errors?.['required']">Full Name is required.</small>
@@ -20,7 +27,7 @@
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Email</label>
+    <label class="form-label">Email:</label>
     <input type="email" formControlName="email" class="form-control" placeholder="Enter email">
     <div class="text-danger" *ngIf="f['email'].touched && f['email'].invalid">
       <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
@@ -29,8 +36,8 @@
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Phone</label>
-    <input type="text" formControlName="phone" class="form-control" placeholder="Enter phone number">
+    <label class="form-label">Phone:</label>
+    <input type="number" formControlName="phone" class="form-control" placeholder="Enter phone number">
     <div class="text-danger" *ngIf="f['phone'].touched && f['phone'].invalid">
       <small *ngIf="f['phone'].errors?.['required']">Phone is required.</small>
       <small *ngIf="f['phone'].errors?.['pattern']">Phone must be 10 digits.</small>
@@ -38,7 +45,7 @@
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Gender</label>
+    <label class="form-label">Gender:</label>
     <select formControlName="gender" class="form-select">
       <option value="">Select Gender</option>
       <option value="Male">Male</option>
@@ -50,16 +57,63 @@
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Date of Birth</label>
+    <label class="form-label">Date of Birth:</label>
     <input type="date" formControlName="dateOfBirth" class="form-control">
     <div class="text-danger" *ngIf="f['dateOfBirth'].touched && f['dateOfBirth'].invalid">
       <small *ngIf="f['dateOfBirth'].errors?.['required']">Date of birth is required.</small>
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary w-100" [disabled]="patientForm.invalid">Register</button>
+  <button type="submit" class="btn btn-primary w-25 mx-2">{{ isEdited ? 'Update' : 'Register' }}</button>
+
+  <button type="button" class="btn btn-secondary w-25" (click)="formReset()">Clear</button>
 </form>
 </div>
+</div>
+<!-- </div> -->
+</div>
+<div class="col-md-7 right-panel ">
+  <div class="d-flex mb-2">
+   <strong class="mt-2">Search On Box:</strong> <input class="form-control w-50 border-info" placeholder="Search By Name Or Phone" type="text" [(ngModel)]="searchText">
+  </div>
+<table class="table table-bordered border-info">
+  <thead class="table-info bg-warning fs-4">
+    <th>No</th>
+  <th>PatientId</th>
+    <th>Name</th>
+      <th>Email</th>
+        <th>Phone</th>
+          <th>DateOfBirth</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pat of getPage; let i = index">
+              <td> {{i+1}}</td>
+              <td class="col-md-2">{{pat.id}}</td>
+              <td class="col-md-2">{{pat.fullName}} </td>
+              <td class="col-md-2">{{pat.email}}</td>
+              <td class="col-md-2">{{pat.phone}}</td>
+              <td class="col-md-2">{{pat.dateOfBirth | date}}</td>
+              <td class="col-md-1"><button class="btn btn-primary" (click)="onEdit(pat)">Edit</button></td>
+            </tr>
+            <tr *ngIf="Patients.length === 0">
+                <td colspan="6">No recored Found</td>
+            </tr>
+          </tbody>
+</table>
+ <!-- Pagination -->
+  <nav *ngIf="totalPage > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="page === 1">
+        <button class="page-link" (click)="page = page - 1">Previous</button>
+      </li>
+      <li class="page-item" *ngFor="let i of [].constructor(totalPage); let idx = index" [class.active]="page === idx + 1">
+        <button class="page-link" (click)="page = idx + 1">{{ idx + 1 }}</button>
+      </li>
+      <li class="page-item" [class.disabled]="page === totalPage">
+        <button class="page-link" (click)="page = page + 1">Next</button>
+      </li>
+    </ul>
+  </nav> 
 </div>
 </div>
 </div>

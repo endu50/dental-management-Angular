@@ -16,105 +16,218 @@
         StockOut Form
       </a>
     </li>
+
+     <li class="nav-item">
+      <a class="nav-link" 
+         [class.active]="activeFilter === 'Stock Detail'" 
+         (click)="activeFilter = 'Stock Detail'" href="javascript:void(0);">
+        Stock Detail
+      </a>
+    </li>
   </ul>
 
   <!-- Supply Registration Form -->
   <div *ngIf="activeFilter === 'Registration Supply'">
     <h4 class="mb-3 text-primary">Supply Registration Form</h4>
-    <form [formGroup]="supplyForm" (ngSubmit)="submitSupply()">
- 
+    <form [formGroup]="supplyForm" (ngSubmit)="submitSupply()" class="border border-primary-subtle">
+ <div class="row m-3">
       <div class="row mb-3">
-        <div class="col-md-6">
-          <label>Item Name</label>
-          <input type="text" class="form-control" formControlName="itemName">
+        <div class="col-md-1">
+          <label>ItemName:</label> 
+          </div>
+            <div class="col-md-4">
+          <input type="text" class="form-control" formControlName="itemName" placeholder="Enter Item Name">
           <div *ngIf="supplyForm.get('itemName')?.touched && supplyForm.get('itemName')?.invalid" class="text-danger">
             Item Name is required.
           </div>
         </div>
-        <div class="col-md-6">
-          <label>Category</label>
-          <input type="text" class="form-control" formControlName="category">
+        </div>
+         <div class="row mb-3">
+        <div class="col-md-1">
+          <label>Category:</label>
+          </div>
+            <div class="col-md-4">
+          <input type="text" class="form-control" formControlName="category" placeholder="Enter Category">
           <div *ngIf="supplyForm.get('category')?.touched && supplyForm.get('category')?.invalid" class="text-danger">
             Category is required.
           </div>
         </div>
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-md-4">
-          <label>Quantity</label>
-          <input type="number" class="form-control" formControlName="quantity">
+        </div>
+        <div class="row mb-3">
+        <div class="col-md-1">
+          <label>Quantity:</label>
+          </div>
+          <div class="col-md-4">
+          <input type="number" class="form-control" formControlName="quantity" placeholder="Enter Quantity">
           <div *ngIf="supplyForm.get('quantity')?.touched && supplyForm.get('quantity')?.invalid" class="text-danger">
             Quantity is required and cannot be negative.
           </div>
         </div>
-        <div class="col-md-4">
-          <label>Unit</label>
-          <input type="text" class="form-control" formControlName="unit">
+        </div>
+         <div class="row mb-3">
+        <div class="col-md-1">
+          <label>Unit:</label>
+        </div>
+          <div class="col-md-4">
+          <input type="text" class="form-control" formControlName="unit" placeholder="Enter Unit">
           <div *ngIf="supplyForm.get('unit')?.touched && supplyForm.get('unit')?.invalid" class="text-danger">
             Unit is required.
           </div>
         </div>
-        <div class="col-md-4">
-          <label>Reorder Level</label>
-          <input type="number" class="form-control" formControlName="reorderLevel">
+        </div>
+        <div class="row mb-3">
+        <div class="col-md-1">
+          <label>ReorderLevel:</label>
+         </div>
+          <div class="col-md-4">
+          <input type="number" class="form-control" formControlName="reorderLevel" placeholder="Enter Reorder Level">
           <div *ngIf="supplyForm.get('reorderLevel')?.touched && supplyForm.get('reorderLevel')?.invalid" class="text-danger">
             Reorder Level is required and must be at least 1.
           </div>
         </div>
+        </div>
+             <div class="row mb-3">
+        <div class="col-md-1">
+          <label>DateRegister:</label>
+         </div>
+          <div class="col-md-4">
+          <input type="date" class="form-control" formControlName="dateEntered" >
+          <div *ngIf="supplyForm.get('dateEntered')?.touched && supplyForm.get('dateEntered')?.invalid" class="text-danger">
+            Date is required.
+          </div>
+        </div>
+        </div>
+     <div class="row mb-3">
+      <div class="col-md-1">
+   
       </div>
-
-      <button type="submit" class="btn btn-success">Register Supply</button>
+      <div class="col-md-4">
+      <button type="submit" class="btn btn-success mx-2">Register Supply</button>
+      <button type="button" class="btn btn-secondary" (click)="resetForm()">Clear</button>
+         </div>
+         </div>
+        </div>
     </form>
   </div>
 
   <!-- Stock Out Form -->
   <div *ngIf="activeFilter === 'StockOut Form'">
     <h4 class="mb-3 text-primary">Stock Out Form</h4>
-    <form [formGroup]="stockOutForm" (ngSubmit)="submitStockOut()">
-           <div class="col-md-6">
-  <label>Select Supply Item</label>
+    <form [formGroup]="stockOutForm" (ngSubmit)="submitStockOut()" class="border border-danger">
+      <div class="row m-3">
+      <div class="row mb-3">
+  <div class="col-md-1">
+  <label>SelectItem:</label> </div>
+  <div class="col-md-4">
   <select class="form-control" formControlName="id">
+    <option class="bg-info" value="">Select Item Here</option>
     <option *ngFor="let item of supplies" [value]="item.id">{{ item.itemName }} (Available: {{ item.quantity }})</option>
   </select>
   <div *ngIf="stockOutForm.get('id')?.touched && stockOutForm.get('id')?.invalid" class="text-danger">
     Please select an item.
   </div>
 </div>
+      </div>
       <div class="row mb-3">
-        <div class="col-md-6">
-          <label>Item Name</label>
-          <input type="text" class="form-control" formControlName="itemName">
+        <div class="col-md-1">
+          <label>ItemName:</label> </div>
+          <div class="col-md-4">
+          <input type="text" class="form-control" formControlName="itemName" placeholder="Enter Item Name">
         </div>
-        <div class="col-md-6">
-          <label>Category</label>
-          <input type="text" class="form-control" formControlName="category">
+        </div>
+         <div class="row mb-3">
+        <div class="col-md-1">
+          <label>Category:</label> </div>
+            <div class="col-md-4">
+          <input type="text" class="form-control" formControlName="category" placeholder="Enter Category">
         </div>
       </div>
-
       <div class="row mb-3">
-        <div class="col-md-4">
-          <label>Quantity</label>
-          <input type="number" class="form-control" formControlName="quantity">
+        <div class="col-md-1">
+          <label>Quantity:</label> </div>
+           <div class="col-md-4">
+          <input type="number" class="form-control" formControlName="quantity" placeholder="Enter Quantity">
           <div *ngIf="stockOutForm.get('quantity')?.touched && stockOutForm.get('quantity')?.invalid" class="text-danger">
             Quantity is required and must be at least 1.
           </div>
         </div>
-        <div class="col-md-4">
-          <label>Unit</label>
-          <input type="text" class="form-control" formControlName="unit">
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-1">
+          <label>Unit:</label> </div>
+          <div class="col-md-4">
+          <input type="text" class="form-control" formControlName="unit" placeholder="Enter unit">
         </div>
-        <div class="col-md-4">
-          <label>Reason for Stock Out</label>
-          <input type="text" class="form-control" formControlName="reason">
+      </div>]
+       <div class="row mb-3">
+        <div class="col-md-1">
+          <label>Reason:</label> </div>
+           <div class="col-md-4">
+          <input type="text" class="form-control" formControlName="reason" placeholder="Enter Reason">
           <div *ngIf="stockOutForm.get('reason')?.touched && stockOutForm.get('reason')?.invalid" class="text-danger">
             Reason is required.
           </div>
         </div>
       </div>
-
-      <button type="submit" class="btn btn-danger">Stock Out</button>
+      <div class="row mb-3">
+        <div class="col-md-1">
+          <label>DateRequest:</label> </div>
+          <div class="col-md-4">
+          <input type="date" class="form-control" formControlName="dateEntered">
+        </div>
+      </div>
+    <div class="row mb-3">
+    <div class="col-md-1">
+    </div>
+     <div class="col-md-4">
+      <button type="submit" class="btn btn-danger mx-2">Stock Out</button>
+    <button type="button" class="btn btn-secondary" (click)="resetFormOut()">Clear</button>
+     </div>
+       </div>
+      </div>
     </form>
   </div>
+  <div class="m-3" *ngIf="activeFilter === 'Stock Detail'">
+  <h2 class="text-center bg-primary-subtle">Stock Request Details</h2>
+  <table class="table table-bordered border-primary">
+    <thead class="table-primary bg-danger-subtle">
+      <th>N0.</th>
+      <th>ItemID</th>
+      <th>Item:</th>
+      <th>Category:</th>
+      <th>Unit:</th>
+      <th>Quantity:</th>
+      <th>ReorderLevel:</th>
+       <th>Request Date:</th>
+    </thead>
+    <tbody class="">
+      <tr *ngFor="let sup of getPages; let i=index">
+        <td>{{i+1}}</td>
+        <td>{{sup.id}}</td>
+        <td>{{sup.itemName}}</td>
+         <td>{{sup.category}}</td>
+          <td>{{sup.unit}}</td>
+           <td>{{sup.quantity}}</td>
+            <td>{{sup.reorderLevel}}</td>
+             <td>{{sup.dateEntered}}</td>
+      </tr>
+      <tr *ngIf="getTotalPages <= 0">
+        <td colspan="6">No Recored Found</td>
+      </tr>
+    </table>
+    <nav *ngIf="getTotalPages > 1 ">
+      <ul  class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="page === 1"> 
+          <button class="page-link" (click)="page= page - 1">Previous</button>
+        </li>
+        <li class="page-item" *ngFor="let item of [].constructor(getTotalPages); let i = index" [class.active]="page === i+1">
+        <button class="page-link" (click)=" page = i+1">{{i+1}}</button>
+        </li>
+        <li class="page-item" [class.disabled]="page === getTotalPages" >
+          <button class="page-link" (click)="page = page + 1">Next</button>
+        </li>
 
+      </ul>
+    </nav>
+  </div>
 </div>
