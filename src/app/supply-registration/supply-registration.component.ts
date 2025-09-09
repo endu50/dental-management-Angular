@@ -18,6 +18,7 @@ supply! : Supply;
 activeFilter: 'Registration Supply' | 'StockOut Form' | 'Stock Detail'= 'Registration Supply';
 page:number=1;
 pageSize:number=10;
+searchText: string ="";
 
 
   constructor(private fb: FormBuilder, private supplyserv: SupplyService) {}
@@ -135,14 +136,24 @@ refreshSupplies() {
   });
 }
 
+get FiltereItem(){
+  return this.supplies.filter(a=> 
+    a.category.toLowerCase().includes(this.searchText.toLowerCase()) ||
+     a.itemName.toLowerCase().includes(this.searchText.toLowerCase())
+     
+    
+
+  )
+}
+
 get getPages(){
 
    const start=(this.page-1)* this.pageSize;
-   return this.supplies.slice(start, start+this.pageSize)
+   return this.FiltereItem.slice(start, start+this.pageSize)
 }
 
 get getTotalPages(){
-  return  Math.ceil((this.supplies.length)/this.pageSize)
+  return  Math.ceil((this.FiltereItem.length)/this.pageSize)
 }
 
 resetForm(){

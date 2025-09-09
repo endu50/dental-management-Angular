@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Account, AuthService } from '../auth-service.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   standalone:true,
@@ -27,7 +28,7 @@ export class ForgetpasswordComponent implements OnInit {
     get emailform() {
     return this.formreset.get('emailform');
   }
-  // get f()
+  // get f()]
   // {
   //   return this.formreset.value.controls;
   // }
@@ -57,17 +58,18 @@ export class ForgetpasswordComponent implements OnInit {
              
                 alert("Password Rest Link send to your email");
               },
-              error:(err)=>{ 
-                  console.error("Reset link error:", err);
-                alert("failed to send the reset link");
-                
-              }
+              error: (err: HttpErrorResponse) => {
+    console.error('Error status', err.status);
+    console.error('Server response body:', err.error);    // <-- inspect this
+    console.error('Full error object:', err);
+    alert(err.error?.message ?? 'Failed to send reset email. Please try again later.');
+  }
 
             })
 
           }
           else {
-            alert("email Not Matched") 
+            alert("email Not Matched try again") 
           }
         },
         error : ()=> {alert("Failed to load account")}

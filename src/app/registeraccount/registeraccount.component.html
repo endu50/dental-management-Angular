@@ -9,7 +9,7 @@
           
           <div class="mb-2">
             <label class="form-label">Full Name:</label>
-            <input class="form-control" type="text" formControlName="fullName">
+            <input class="form-control" type="text" formControlName="fullName" placeholder="Enter FullName">
             <div class="error-block text-danger mt-1" *ngIf="f['fullName'].touched && f['fullName'].invalid">
               <small *ngIf="f['fullName'].errors?.['required']">Full Name is required</small>
               <small *ngIf="f['fullName'].errors?.['minlength']">Full Name must be > 5 char</small>
@@ -18,7 +18,7 @@
 
           <div class="mb-2">
             <label class="form-label">Email:</label>
-            <input class="form-control" type="email" formControlName="email">
+            <input class="form-control" type="email" formControlName="email" placeholder="Enter Email">
             <div class="error-block text-danger mt-1" *ngIf="f['email'].touched && f['email'].invalid">
               <small *ngIf="f['email'].errors?.['required']">Email is required</small>
               <small *ngIf="f['email'].errors?.['email']">Valid Email is required</small>
@@ -27,7 +27,7 @@
 
           <div class="mb-2">
             <label class="form-label">Phone Number:</label>
-            <input class="form-control" type="number" formControlName="PhoneNumber">
+            <input class="form-control" type="text" formControlName="PhoneNumber" placeholder="Enter Phone number">
             <div class="error-block text-danger mt-1" *ngIf="f['PhoneNumber'].touched && f['PhoneNumber'].invalid">
               <small *ngIf="f['PhoneNumber'].errors?.['required']">Phone Number is required</small>
               <small *ngIf="f['PhoneNumber'].errors?.['pattern']">Phone Number should be 10 digits</small>
@@ -36,7 +36,7 @@
 
           <div class="mb-2 otp-box p-3 rounded-3">
             <label class="form-label fw-bold">OTP Code:</label>
-            <input class="form-control" type="number" formControlName="OtpCode">
+            <input class="form-control" type="text" formControlName="OtpCode" readonly>
           </div>
 
           <div class="mb-2 role-box p-3 rounded-3">
@@ -50,7 +50,7 @@
 
           <div class="mb-2">
             <label class="form-label">Password:</label>
-            <input class="form-control" type="password" formControlName="password">
+            <input class="form-control" type="password" formControlName="password" placeholder="Enter Password">
             <div class="error-block text-danger mt-1" *ngIf="f['password'].touched && f['password'].invalid">
               <small *ngIf="f['password'].errors?.['required']">Password is required</small>
               <small *ngIf="f['password'].errors?.['minlength']">Password must be > 6 characters</small>
@@ -60,7 +60,7 @@
 
           <div class="mb-2">
             <label class="form-label">Confirm Password:</label>
-            <input class="form-control" type="password" formControlName="confirmpassword">
+            <input class="form-control" type="password" formControlName="confirmpassword" placeholder="Enter Confirm Password">
             <div class="error-block text-danger mt-1" *ngIf="f['confirmpassword'].touched && f['confirmpassword'].invalid">
               <small *ngIf="f['confirmpassword'].errors?.['required']">Confirm Password is required</small>
               <small *ngIf="f['confirmpassword'].errors?.['mismatch']">Passwords do not match</small>

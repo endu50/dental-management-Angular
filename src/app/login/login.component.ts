@@ -61,6 +61,8 @@ export class LoginComponent {
             roleToSet = decoded?.role || decoded?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
           } catch (e) {
             console.error('Failed to decode token after login', e);
+            this.forgetpassowrd=true;
+
           }
         }
 
@@ -85,6 +87,7 @@ export class LoginComponent {
         } else {
           // default
           this.router.navigate(['/login']);
+          this.forgetpassowrd=true;
         }
       },
       error: (err) => {

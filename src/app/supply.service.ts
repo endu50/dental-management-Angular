@@ -27,6 +27,9 @@ export class SupplyService {
   addSupply(supply: Supply): Observable<Supply> {
     return this.http.post<Supply>(this.apiUrl, supply);
   }
+  requestSupply(supply: Supply): Observable<Supply> {
+    return this.http.post<Supply>(`${this.apiUrl}/${supply.id}`,supply)
+  }
 
   updateSupply(supply: Supply): Observable<Supply> {
     return this.http.put<Supply>(`${this.apiUrl}/${supply.id}`, supply);

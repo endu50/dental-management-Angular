@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, } from '@angular/common';
 import { ReactiveFormsModule,FormGroup,FormBuilder,Validators, AbstractControl } from '@angular/forms';
 import { Account, AuthService } from '../auth-service.service';
+import { finalize } from 'rxjs';
 
 
 @Component({
@@ -10,10 +11,12 @@ import { Account, AuthService } from '../auth-service.service';
   templateUrl: './registeraccount.component.html',
   styleUrl: './registeraccount.component.css'
 })
-export class RegisteraccountComponent {
+export class RegisteraccountComponent implements OnInit {
   form: FormGroup;
   account: Account[]=[];
-
+  acc:Account | null= null;
+  emaildb:string="";
+ loading = false;
   constructor(private fb: FormBuilder, private auth: AuthService) {
     this.form = this.fb.group({
       fullName: ['', [Validators.required,Validators.minLength(5)]],
@@ -25,6 +28,9 @@ export class RegisteraccountComponent {
       Role: ['',Validators.required]
     },{validator : this.passwordmatchvalidator});
     
+  }
+  ngOnInit(): void {
+    this.form.patchValue({OtpCode : "1212"});
   }
   get f() { return this.form.controls; }
   
@@ -62,22 +68,49 @@ export class RegisteraccountComponent {
   onSubmit() {
     if (this.form.valid) {
       const accounts = this.form.value;
-      this.auth.registerAccount(accounts).subscribe({
+      const email= this.form.get('email')?.value;
+      this.auth.getAccount().subscribe({
+        next:(data)=>{
+      const matched=  data.find(a=> a.email  && a.email.toLowerCase()=== email);
+       if(!matched) {
+
+                this.auth.registerAccount(accounts).subscribe({
         next: (data) => {
-        console.log('Registered:', data);
+        //console.log('Registered:', data);
         alert("The Account Registered successfully");
         this.form.reset();
         this.form.patchValue({Role: ""});
+           this.form.patchValue({OtpCode : "1212"});
       },
       error : (err) => {
           if(err==500 && err?.error?.errors)
          console.log("registration failed"+ err.error.errors)
+        alert("registration failed");
         }
-      })
+      });
+
+        }
+
+        else {
+          alert ("Email Already Exist Try another!!!");
+        }
+
+
+          
+        },
+        error:(err)=>  {
+
+        } 
+         });
+
+    }
+    else {
+      alert("Invalid Form");
     }
   }
   resetForm(){
     this.form.reset();
       this.form.patchValue({Role: ""});
+         this.form.patchValue({OtpCode : "1212"});
   }
 }

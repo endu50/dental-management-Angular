@@ -189,6 +189,9 @@
   </div>
   <div class="m-3" *ngIf="activeFilter === 'Stock Detail'">
   <h2 class="text-center bg-primary-subtle">Stock Request Details</h2>
+  <div class="m-4 d-flex">
+    <strong class="mt-2">Search On Box:</strong><input typ="text" class="form-control w-25" [(ngModel)]="searchText" placeholder="Enter ItemName,Category ">
+    </div>
   <table class="table table-bordered border-primary">
     <thead class="table-primary bg-danger-subtle">
       <th>N0.</th>
@@ -201,7 +204,7 @@
        <th>Request Date:</th>
     </thead>
     <tbody class="">
-      <tr *ngFor="let sup of getPages; let i=index">
+      <tr *ngFor="let sup of getPages; let i=index" [ngClass]="{'table-danger': sup.quantity < sup.reorderLevel}" >
         <td>{{i+1}}</td>
         <td>{{sup.id}}</td>
         <td>{{sup.itemName}}</td>

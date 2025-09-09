@@ -14,7 +14,7 @@ import { distinctUntilChanged } from 'rxjs';
 })
 export class InventoryManagementComponent implements OnInit, OnDestroy {
 supplies: Supply[] = [];
-  supplyForm: FormGroup;
+  supplyForm!: FormGroup;
   isEditMode = false;
   currentSupplyId?: number;
     private reorderSub?: Subscription;
@@ -23,6 +23,11 @@ supplies: Supply[] = [];
     pageSize: number = 7;
 
   constructor(private fb: FormBuilder, private supplyService: SupplyService) {
+    
+  }
+
+  ngOnInit(): void {
+
     this.supplyForm = this.fb.group({
       itemName: ['', Validators.required],
       category: ['', Validators.required],
@@ -31,9 +36,9 @@ supplies: Supply[] = [];
       dateEntered:[''],
       reorderLevel: ['', [Validators.required, Validators.min(5)]],
     });
-  }
+          const today = new Date().toLocaleDateString('en-CA'); // "2025-08-15"
+    this.supplyForm.patchValue({ dateEntered: today });
 
-  ngOnInit(): void {
     this.loadSupplies();
        const reorder = this.supplyForm.get('reorderLevel') as FormControl | null;
        this.reorderSub= reorder?.valueChanges.pipe(distinctUntilChanged())
@@ -46,8 +51,7 @@ supplies: Supply[] = [];
     }) ?? undefined;
 
       
-      const today = new Date().toLocaleDateString('en-CA'); // "2025-08-15"
-    this.supplyForm.patchValue({ dateEntered: today });
+
     
   }
 
@@ -82,6 +86,8 @@ else {
       alert('The Supply Item Updated Successfully!!');
         this.loadSupplies();
         this.resetForm();
+    const today = new Date().toLocaleDateString('en-CA'); // "2025-08-15"
+    this.supplyForm.patchValue({ dateEntered: today });
         
       });
     } else {
@@ -91,6 +97,8 @@ else {
         console.log("suppData"+ supplyData)
         this.loadSupplies();
         this.resetForm();
+    const today = new Date().toLocaleDateString('en-CA'); // "2025-08-15"
+    this.supplyForm.patchValue({ dateEntered: today });
       });
     }
   }
@@ -108,6 +116,8 @@ else {
         next:()=> {
            alert('The Item Deleted Successfully!!!');
           this.loadSupplies();
+    const today = new Date().toLocaleDateString('en-CA'); // "2025-08-15"
+    this.supplyForm.patchValue({ dateEntered: today });
         },
         error:()=>{alert('Unable to delete the Item')}
       });

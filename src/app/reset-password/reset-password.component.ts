@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterConfigOptions } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth-service.service';
 
@@ -15,7 +15,8 @@ export class ResetPasswordComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private auth: AuthService
+    private auth: AuthService,
+    private routeURL:Router
   ) {
     this.form = this.fb.group({
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
@@ -31,7 +32,12 @@ ngOnInit(): void {
   onSubmit() {
     if (this.form.valid && this.form.value.newPassword === this.form.value.confirmPassword) {
       this.auth.resetPassword(this.token, this.form.value.newPassword).subscribe({
-        next: () => alert('Password reset successful'),
+        next: (data) =>{
+           alert('Password reset successful')
+           this.auth.logout();
+          // this.routeURL.navigate(['/login'])
+           },
+      
         error: (err) => {// Properly show the error
     console.error('Reset password error:', err);
     alert("Error: " + (err?.error?.message || err?.message || "Something went wrong"))
