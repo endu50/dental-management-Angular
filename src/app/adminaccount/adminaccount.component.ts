@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RegisteraccountComponent } from '../registeraccount/registeraccount.component';
 import { Account } from '../auth-service.service';
 import { AuthService } from '../auth-service.service';
 
@@ -19,6 +18,7 @@ export class AdminaccountComponent implements OnInit {
   form! : FormGroup;
   serarchText: string ="";
   account : Account[]=[];
+  userName: string= ""; 
 
   constructor( private fb :FormBuilder,private auth: AuthService) {
     
@@ -28,15 +28,72 @@ export class AdminaccountComponent implements OnInit {
     
     this.form = this.fb.group({
       
-      fullName: [],
-      email: [],
-      password: [],
-      role:[]
+      fullName: ['',Validators.required],  
+      email: ['',Validators.required],
+       role:['',Validators.required],
+        newPassword: ['',Validators.required],
+        conPassword: ['',Validators.required]
+     
 
  
-    });
+    },{validator : this.passwordValidator});
   this.loadContent();
   console.log(this.account);
+   this.auth.getAccount().subscribe({
+      next:(data)=>{
+
+    this.account =data;
+      this.form.get('email')?.valueChanges.subscribe(selectedUser =>  {
+     const matched =  this.account.find(a=> 
+      a.email === selectedUser
+
+      )
+         if(matched){
+          this.form.patchValue({fullName: matched.fullName })
+          this.form.patchValue({role: matched.role })
+        }
+      
+
+      }) } ,
+    
+      error:(err)=>{}
+       })
+  }
+passwordValidator(form : AbstractControl){
+  const pass=form.get('newPassword')?.value;
+
+  const  conPassControl= form.get('conPassword');
+
+  if(!conPassControl) return;
+
+  const conPassValue= conPassControl.value;
+ 
+  if(conPassControl.errors && !conPassControl.errors['mismatch']) {
+    return null;
+  }
+
+  if(pass !== conPassValue){
+    conPassControl.setErrors({...conPassControl.errors, mismatch:true})
+  }
+
+  else {
+    const errors = conPassControl.errors;
+    if(errors) {
+      delete errors ['mismatch']
+    if(Object.keys(errors).length===0) {
+      conPassControl.setErrors(null);
+    }
+    else{
+conPassControl?.setErrors(errors)
+    }
+  }
+  }
+    
+    return null;
+
+}
+  get f(){
+    return this.form.controls;
   }
 
   getFilteredAccount() :Account[]{
@@ -69,7 +126,21 @@ export class AdminaccountComponent implements OnInit {
    })
 
   }
-
+  onResetPassword(){
+   let formValue:Account=this.form.value;
+    this.auth.resetPasswordAdmin(formValue).subscribe({
+     next:(data)=>{
+       alert("The Password Rest successfully!");
+       this.form.reset();
+       this.form.patchValue({email: ""})
+     },
+     error:(err)=> {
+       console.log("ExactError"+ err.error.errors);
+       console.error(err);
+      alert("Failed to Reset Password");
+    }
+    })
+  }
 
 }
 

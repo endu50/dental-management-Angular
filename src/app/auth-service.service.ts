@@ -406,6 +406,13 @@ changePassword(currentPassword: string, newPassword: string)
     });
   }
 
+    resetPasswordAdmin(account:Account): Observable<Account> {
+    return this.http.put<Account>('http://localhost:5139/api/auth/reset-passwordAdmin', account
+      
+    );
+  }
+  
+
   sendOtp(phoneNumber: string) {
     return this.http.post('http://localhost:5139/api/auth/send-otp', phoneNumber, {
       headers: { 'Content-Type': 'application/json' },

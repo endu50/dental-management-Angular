@@ -1,10 +1,42 @@
 
 <div class="container mt-4">
-<h1 class="text-center bg-danger p-5">List Of Accounts Page!</h1>
-<div class="d-flex m-5 ">
+    <form [formGroup]="form" class="m-3 bg-body-secondary">
+<div class="">
+    <h1 class="bg-info-subtle">Reset Password here </h1>
+    <div class="col-md-4 mb-3">
+       <strong>UserName:</strong>  <select type="text" class="form-select" placeholder="Enter Email" formControlName = "email">
+        <option Value="">Select UserName(EmailAddress)</option>
+        <option *ngFor="let user of account">{{user.email}}</option>
+        </select> 
+</div>
+  <div class="col-md-4 mb-3">
+        <strong>Full Name:</strong><input type="text" class="form-control" placeholder="Enter FullName" formControlName = "fullName" readonly >
+        </div>
+          <div class="col-md-4 mb-3">
+               <strong>Role:</strong>  <input type="text" class="form-control" placeholder="Enter Role" formControlName = "role"  readonly >
+            </div>
+          <div class="col-md-4 mb-3">
+              <strong>New Password:</strong> <input type="text" class="form-control" placeholder="Enter New Password" formControlName="newPassword">
+              <div  class="text-danger" *ngIf="f['newPassword']?.invalid && f['newPassword']?.touched">
+                <small *ngIf="f['newPassword'].errors?.['required'] ">New Password Required</small> 
+              </div>
+          </div>   
+               <strong>Confirm Password:</strong> <div class="col-md-4 mb-3">
+        <input type="text" class="form-control" placeholder="Confirm New Password" formControlName="conPassword">
+              <div  class="text-danger" *ngIf="f['conPassword']?.invalid && f['conPassword']?.touched">
+                <small *ngIf="f['conPassword'].errors?.['required'] ">Confirm Password Required</small> 
+                 <small *ngIf="f['conPassword'].errors?.['mismatch'] ">Confirm Password Not Match</small> 
+              </div>
+          </div>   
+          
+    <button class="btn btn-primary w-25" (click)="onResetPassword()" [disabled]="form.invalid">Reset Password</button>
+</div>
+</form>
+<h1 class="text-center bg-danger p-3">List Of Accounts Page!</h1>
+<div class="d-flex m-3 ">
 <strong class="mt-1">Search On Box:</strong><input type="text" [(ngModel)]="serarchText" 
  class="form-control  border-danger-subtle w-50" placeholder="enter FullName or email to search"> </div>
-<div class="row m-4">
+<div class="row m-3">
 <ul class="list-group mb-3 mt-3">
 <li class="list-group-item d-flex justify-content-between align-items-center"  *ngFor="let account of getFilteredAccount()">
    <div class="col-md-3"> <strong>Full Name:</strong> <strong> {{account.fullName}}</strong> </div> 
@@ -16,4 +48,5 @@
 </li>
 </ul>
 </div>
+
 </div>
